@@ -1,0 +1,10 @@
+tmp/
+output/
+sources/
+*.DS_Store
+__pycache__/
+*.pyc
+AppleFonts/system/fonts/
+AppleFonts/webroot/fonts/
+AppleFonts/fonts_store/
+AppleFonts/*.pristine.ttf

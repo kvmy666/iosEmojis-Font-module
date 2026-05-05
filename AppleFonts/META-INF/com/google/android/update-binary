@@ -1,0 +1,19 @@
+#!/sbin/sh
+
+# KernelSU / Magisk module installer
+# Standard template — do not modify this file
+
+SKIPUNZIP=1
+
+# Extract module files
+unzip -o "$ZIPFILE" 'module.prop' -d "$TMPDIR" >&2
+if ! grep -q "id=AppleFonts" "$TMPDIR/module.prop" 2>/dev/null; then
+  ui_print "ERROR: wrong zip — module.prop id mismatch"
+  exit 1
+fi
+
+# Extract everything except META-INF
+unzip -o "$ZIPFILE" -x 'META-INF/*' -d "$MODPATH" >&2
+
+# Run customize.sh
+. "$MODPATH/customize.sh"

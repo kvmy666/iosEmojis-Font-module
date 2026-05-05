@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Fonts</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header glass">
+    <div class="header-left">
+      <span class="app-icon">&#xf8ff;</span>
+      <div>
+        <h1 class="app-title">Apple Fonts</h1>
+        <span class="app-version">v1.0.0</span>
+      </div>
+    </div>
+    <span id="status-badge" class="badge badge-loading">Loading…</span>
+  </header>
+
+  <!-- Font Controls -->
+  <section id="controls-section" class="card glass">
+    <h2 class="section-title">Font Controls</h2>
+
+    <!-- Latin -->
+    <div class="toggle-section">
+      <span class="toggle-section-label">Latin</span>
+      <div class="toggle-row">
+        <button id="toggle-latin" class="toggle-btn toggle-on">SF Pro — On</button>
+      </div>
+    </div>
+
+    <!-- Arabic (3 mutually exclusive options) -->
+    <div class="toggle-section">
+      <span class="toggle-section-label">Arabic</span>
+      <div class="toggle-row">
+        <button id="toggle-arabic" class="toggle-btn toggle-on">SF Arabic — On</button>
+        <button id="toggle-geeza"  class="toggle-btn toggle-off">Geeza Pro — Off</button>
+        <button id="toggle-cocon"  class="toggle-btn toggle-off">Cocon — Off</button>
+      </div>
+    </div>
+
+    <!-- Other -->
+    <div class="toggle-section">
+      <span class="toggle-section-label">Other</span>
+      <div class="toggle-row">
+        <button id="toggle-emoji" class="toggle-btn toggle-on">Apple Emoji — On</button>
+      </div>
+    </div>
+
+    <!-- Weight slider + number input -->
+    <div class="slider-group">
+      <div class="slider-header">
+        <label for="wght-slider">Weight</label>
+        <input type="number" id="wght-input" class="weight-input" min="100" max="1000" step="1" value="400">
+      </div>
+      <input type="range" id="wght-slider" min="100" max="1000" step="50" value="400">
+      <div class="slider-ticks">
+        <span>Thin (100)</span><span>Regular (400)</span><span>Bold (700)</span><span>Black (1000)</span>
+      </div>
+      <p class="weight-note">Weight only applies to SF Pro and SF Arabic (variable fonts).</p>
+    </div>
+
+    <!-- Live weight preview -->
+    <div class="preview-panel">
+      <div class="preview-label">Live preview</div>
+      <div id="preview-latin" class="preview-text">The quick brown fox — 0123456789</div>
+      <div id="preview-arabic" class="preview-text preview-rtl" dir="rtl">الخط العربي الجميل — أبجد هوز حطي</div>
+    </div>
+  </section>
+
+  <!-- Apply -->
+  <section class="card glass">
+    <h2 class="section-title">Apply</h2>
+    <div class="button-row">
+      <button id="btn-apply" class="btn btn-primary">Apply to System</button>
+      <button id="btn-reset" class="btn btn-secondary">Reset Defaults</button>
+    </div>
+    <p id="apply-note" class="apply-note" hidden>
+      Settings saved. <strong>Reboot your phone</strong> to apply changes.
+    </p>
+    <p id="apply-error" class="apply-error" hidden></p>
+  </section>
+
+  <!-- Diagnostics -->
+  <section class="card glass">
+    <h2 class="section-title">Diagnostics</h2>
+    <div class="diag-grid">
+      <div class="diag-row">
+        <span class="diag-label">Module</span>
+        <span id="diag-status" class="diag-value">—</span>
+      </div>
+      <div class="diag-row">
+        <span class="diag-label">Applied</span>
+        <span id="diag-config" class="diag-value">—</span>
+      </div>
+      <div class="diag-row">
+        <span class="diag-label">Last boot</span>
+        <span id="diag-boot" class="diag-value">—</span>
+      </div>
+      <div class="diag-row">
+        <span class="diag-label">Patch log</span>
+        <span id="diag-patch" class="diag-value">—</span>
+      </div>
+    </div>
+    <div class="perf-log-header">
+      <span class="diag-label">Perf log (last 5 entries)</span>
+      <button id="btn-perf" class="btn-icon" title="Refresh perf snapshot">&#8635;</button>
+    </div>
+    <pre id="diag-perf" class="perf-log">—</pre>
+  </section>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>
