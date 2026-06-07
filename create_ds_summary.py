@@ -169,12 +169,12 @@ body.append(f"""
   <div class="legend">
     <span class="badge-green">GREEN</span> 33 highlights &nbsp;&nbsp;
     <span class="badge-yellow">YELLOW</span> 6 highlights &nbsp;&nbsp;
-    <span class="badge-red">RED</span> 4 highlights &nbsp;&nbsp;
-    = 43 highlighted + 20 additional
+    <span class="badge-red">RED</span> 4 highlights + 8 stamps (Ch.2) &nbsp;&nbsp;
+    = 51 highlighted + 20 additional
   </div>
   <br>
   <p style="font-size:9pt; color:#444;">
-    Part 1: Highlighted items from PDFs (Chapters 1–10)<br>
+    Part 1: Highlighted items from PDFs (Chapters 1–10, including Ch.2 stamp marks)<br>
     Part 2: 20 Additional essential definitions
   </p>
   <br><br>
@@ -185,7 +185,7 @@ body.append(f"""
 # ════════════════════════════════════════════════════════════════
 # PART 1 – HIGHLIGHTED ITEMS
 # ════════════════════════════════════════════════════════════════
-body.append(divider("PART 1 — Highlighted Items from PDFs (43 items)"))
+body.append(divider("PART 1 — Highlighted Items from PDFs (51 items: Chapters 1–10)"))
 
 # ── CHAPTER 1 Highlights ────────────────────────────────────────
 body.append(chapter("Chapter 1: Introduction to Python &amp; Data Structures"))
@@ -249,6 +249,75 @@ body.append(tip("Python uses duck typing — the type is determined at runtime, 
 body.append(tip("A recursive function without a base case will cause a RecursionError (stack overflow)."))
 body.append(trap("Higher-order functions (map, filter) are not for sorting — use sorted() with key= for sorting. Do not confuse them."))
 body.append(trap("Linear data structures are NOT the same as linear time O(n). 'Linear' in DS means sequential ordering of elements."))
+
+# ── CHAPTER 2 Highlights ────────────────────────────────────────
+body.append(chapter("Chapter 2: Python Data Types &amp; Structures"))
+body.append(section("Red Stamp Marks — Method Tables (Pages 10, 11, 15, 16, 18, 19, 21, 25)"))
+
+body.append(term("Sequence Types — Common Methods (pp. 10–11)",
+    "Key built-in functions for sequences (string, list, tuple, range): "
+    "len(s) returns number of elements; min(s)/max(s) return smallest/largest; "
+    "sum(s) returns sum of elements; all(s) returns True if all elements are True; "
+    "any(s) checks whether any item in s is True.",
+    "red"))
+
+body.append(term("Sequence Operations (p. 11)",
+    "s+r concatenates two sequences of the same type; s*n makes n copies; "
+    "s[i] indexing returns the i-th element; s[i:j:stride] slicing returns elements between i and j; "
+    "x in s returns True if x is found; x not in s returns True if x is not in the sequence.",
+    "red"))
+
+body.append(term("Dictionary Methods (p. 15)",
+    "len(d) total items; d.clear() removes all items; d.copy() shallow copy; "
+    "d.get(k,v) returns d[k] if found, else v; d.items() all key:value pairs; "
+    "d.keys() all keys; d.pop(k) removes and returns d[k]; "
+    "d.update(b) adds all objects from b; d.values() all values.",
+    "red"))
+
+body.append(term("Dictionary — Key Rule (p. 16)",
+    "Dictionary keys must be unique and immutable. Values can be any type. "
+    "d.setdefault(k,v) returns d[k] if found; if not found, sets d[k]=v and returns v.",
+    "red"))
+
+body.append(term("Set Methods — Immutable Operations (p. 18)",
+    "a.difference(t): elements in a but not in t; a.intersection(t): elements in both; "
+    "a.isdisjoint(t): True if no element is common; a.issubset(t): True if all a elements are in t; "
+    "a.issuperset(t): True if all t elements are in a; a.union(t): elements in either a or t.",
+    "red"))
+
+body.append(term("Mutable Set Methods (p. 19)",
+    "s.add(item) adds item (nothing happens if already present); s.clear() removes all; "
+    "s.discard(item) removes item; s.remove(item) deletes item; s.pop() returns an arbitrary item; "
+    "s.update(t) appends all items from iterable t.",
+    "red"))
+
+body.append(term("frozenset — Immutable Set (p. 21)",
+    "Use frozenset instead of set when you want to add a set inside another set, "
+    "or use it as a key in a dictionary. s.add(frozenset(s2)) works; s.add(s2) raises TypeError.",
+    "red"))
+
+body.append(term("Array vs List — Memory (p. 25)",
+    "The array module stores typed data more efficiently than a Python list. "
+    "array.array('i', range(10**6)) uses ~91% less memory than list(range(10**6)). "
+    "Use arrays when memory efficiency is critical for large numeric datasets.",
+    "red"))
+
+body.append("""<table class="complexity-table">
+<tr><th>Operation</th><th>Description</th></tr>
+<tr><td>s[i]</td><td>Indexing — returns the i-th element</td></tr>
+<tr><td>s[i:j:stride]</td><td>Slicing — returns elements between index i and j</td></tr>
+<tr><td>s+r</td><td>Concatenation — combines two sequences of the same type</td></tr>
+<tr><td>x in s</td><td>Membership test — True if x found in s</td></tr>
+<tr><td>len(s)</td><td>Length — returns number of elements</td></tr>
+<tr><td>d.get(k,v)</td><td>Safe dict access — returns v (not KeyError) if key missing</td></tr>
+<tr><td>a.intersection(t)</td><td>Set intersection — elements in both a and t</td></tr>
+<tr><td>a.union(t)</td><td>Set union — elements in either a or t</td></tr>
+</table>""")
+
+body.append(tip("d.get(key, default) is safer than d[key] — it never raises KeyError. Always use get() when the key might not exist."))
+body.append(tip("frozenset is hashable and can be used as a dictionary key or inside another set. Regular set cannot."))
+body.append(trap("s.remove(item) raises KeyError if item not found. Use s.discard(item) instead — it never raises an error."))
+body.append(trap("array.array is NOT the same as a Python list. It only stores elements of a single type but uses far less memory."))
 
 # ── CHAPTER 3 Highlights ────────────────────────────────────────
 body.append(chapter("Chapter 3: Algorithm Analysis &amp; Big-O Notation"))

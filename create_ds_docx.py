@@ -150,7 +150,7 @@ r.font.size = Pt(12); r.font.bold = True
 doc.add_paragraph()
 p = doc.add_paragraph()
 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-r = p.add_run("GREEN: 33  |  YELLOW: 6  |  RED: 4  → 43 highlighted + 20 additional = 60 total")
+r = p.add_run("GREEN: 33  |  YELLOW: 6  |  RED: 4 + 8 stamps (Ch.2)  →  51 highlighted + 20 additional")
 r.font.size = Pt(10)
 
 doc.add_paragraph()
@@ -179,6 +179,35 @@ add_term(doc, "Recursion", "Occurs when a function calls itself during execution
 add_term(doc, "Inheritance (OOP)", "Allows a new class to inherit and modify functionality from other classes, enabling code reuse.", "green")
 add_tip(doc, "Python uses dynamic typing — type is determined at runtime. A recursive function without a base case causes RecursionError.")
 add_trap(doc, "map() and filter() are NOT sorting functions. Use sorted() with key= for sorting. Linear in DS means sequential order, NOT O(n) time.")
+
+# Ch2
+add_chapter_heading(doc, "Chapter 2: Python Data Types & Structures")
+add_section(doc, "Red Stamp Marks — Method Tables (Pages 10, 11, 15, 16, 18, 19, 21, 25)")
+add_term(doc, "Sequence Types — Common Methods (pp. 10–11)",
+    "len(s) count; min/max/sum; all(s) True if all elements True; any(s) True if any item True. "
+    "s+r concatenates; s*n copies; s[i] indexing; s[i:j:stride] slicing; x in s membership.", "red")
+add_term(doc, "Dictionary Methods (p. 15)",
+    "d.get(k,v) returns d[k] or v if missing; d.keys() all keys; d.values() all values; "
+    "d.items() all key:value pairs; d.pop(k) removes and returns k; d.update(b) merges b into d.", "red")
+add_term(doc, "Dictionary Key Rule (p. 16)",
+    "Keys must be unique and immutable. d.setdefault(k,v) returns d[k] if found; "
+    "if not found, sets d[k]=v and returns v.", "red")
+add_term(doc, "Set Methods — Immutable (p. 18)",
+    "a.difference(t) elements in a not in t; a.intersection(t) elements in both; "
+    "a.union(t) elements in either; a.issubset(t) True if all a in t; a.issuperset(t) True if all t in a.", "red")
+add_term(doc, "Mutable Set Methods (p. 19)",
+    "s.add(item) adds (nothing if already present); s.discard(item) removes safely; "
+    "s.remove(item) removes (raises KeyError if missing); s.pop() removes arbitrary item.", "red")
+add_term(doc, "frozenset — Immutable Set (p. 21)",
+    "Use frozenset instead of set when you want to use a set as a dict key or add it inside another set. "
+    "s.add(s2) raises TypeError; s.add(frozenset(s2)) works.", "red")
+add_term(doc, "Array vs List — Memory (p. 25)",
+    "array.array stores typed data and uses ~91% less memory than a Python list for large numeric data. "
+    "Use arrays when memory efficiency is critical.", "red")
+add_tip(doc, "d.get(key, default) never raises KeyError — always safer than d[key] when key may not exist.")
+add_tip(doc, "frozenset is hashable and can be used as a dict key or inside another set. Regular set cannot.")
+add_trap(doc, "s.remove(item) raises KeyError if item not found. Use s.discard(item) — it never raises an error.")
+add_trap(doc, "array.array is NOT a Python list — it only stores one type of element but uses far less memory.")
 
 # Ch3
 add_chapter_heading(doc, "Chapter 3: Algorithm Analysis & Big-O Notation")
