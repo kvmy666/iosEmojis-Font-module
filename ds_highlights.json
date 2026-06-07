@@ -1,0 +1,482 @@
+{
+  "green": [
+    {
+      "chapter": "Chapter 1",
+      "page": 14,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qIn python, it is not required to first declare the datatype for the variables. qVariables point to an object that can change their type depending on the kind of values assigned to them. qExample: the type of a is changed from int to float, depending upon the value stored in the variable."
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 30,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qA function is a block of code which only runs when it is called. qA function can return data as a result. qIn Python a function is defined using the def keyword qTo call a function, use the function name followed by parenthesis. 30"
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 34,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qRecursion occurs when a function takes one or more calls to itself during execution. qDifference between recursion and loop § loops execute statements repeatedly through a Boolean condition or through a series of elements, § recursion repeatedly calls a function. § iteration loops through a sequence of operations, whereas recursion repeatedly calls a function."
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 42,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qInheritance allows to inherit the functionality from other classes. qInheritance allows creating a new class that modifies the behavior of an existing class. qInheritance expresses a relationship between an existing (parent/base) class and a new (derived/child) class, also called subclass. qA subclass inherits all the features of its parent. qIf an object of one class is created by inheriting another class, then the object would have all the functionality, methods, and variables of both the classes; that is, the parent class and new class. qInheritance in Python is done by passing the inherited class as an argument in the class definition. It is often used to modify the behavior of existing methods. qFor a subclass to define new class variables, it needs to define an __init__() method 42"
+    },
+    {
+      "chapter": "Chapter 3",
+      "page": 8,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qThe divide and conquer paradigm involves: o breaking a problem into smaller simple sub-problems, oand then solving these sub-problems, oand finally, combining the results to obtain a global optimal solution. oThis is a very common and natural problem-solving technique, and is, arguably, the most commonly used approach to algorithm design."
+    },
+    {
+      "chapter": "Chapter 3",
+      "page": 24,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qThe letter O in big O notation stands for order, in recognition that rates of growth are defined as the order of a function. q It measures the worst-case running time complexity, that is, the maximum time to be taken by the algorithm. We say that one function T(n) is a big O of another function, F(n), and we define this as follows"
+    },
+    {
+      "chapter": "Chapter 3",
+      "page": 27,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "Big O notation qIn the following table, we list the most common growth rates(time complexity or the complexity class of a function) in order from lowest to highest. Complexity class Name Example operations O(1) Constant append, get item, set item. O(logn) Logarithmic Finding an element in a sorted array. O(n) Linear copy, insert, delete, iteration nLogn Linear-logarithmic Sort a list, merge-sort. n2 Quadratic Find the shortest path between two nodes in a graph. Nested loops. n 3 Cubic Matrix multiplication. 2 n Exponential Towers of Hanoi problem, backtracking"
+    },
+    {
+      "chapter": "Chapter 4",
+      "page": 13,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qThe worst-case running time (time complexity) is O(1)."
+    },
+    {
+      "chapter": "Chapter 4",
+      "page": 15,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qHere is what the implementation of the delete() method may look like: qThe delete operation to remove a node has the time complexity O(n)."
+    },
+    {
+      "chapter": "Chapter 5",
+      "page": 10,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qIt returns the top element from the stack without deleting it from the stack. qpeek method just returns the topmost element; however, pop method returns and deletes it from the stack. q If there is a top element in the stack, peek returns its data; otherwise, return None"
+    },
+    {
+      "chapter": "Chapter 5",
+      "page": 20,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qThe time complexity is O(1). qA doubly linked list with FIFO kind of data access is a queue with first in first out method."
+    },
+    {
+      "chapter": "Chapter 5",
+      "page": 20,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "q Using a Python list to implement a queue qImplement queue using pointer structures. qUsing doubly linked list. qUsing insertion and deletion operations."
+    },
+    {
+      "chapter": "Chapter 6",
+      "page": 7,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "qA binary tree is a collection of nodes, where the nodes in the tree can have zero, 1, or 2 child nodes. A simple binary tree has a maximum of two children, that is, the left child and the right child q A tree is called a full binary tree if all the nodes of a binary tree have either zero or two children, and if there is no node that has 1 child. q A binary tree is called a complete binary tree if it is completely filled, with a possible exception at the bottom level, which is filled from left to right A binary tree node class in Python: class Node: def init (self, data): self.data = data self.right_child = None self.left_child = None"
+    },
+    {
+      "chapter": "Chapter 6",
+      "page": 8,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "To test this class, we must first create four nodes n1, n2, n3, and n4: n1 = Node(\"root node\") n2 = Node(\"left child node\") n3 = Node(\"right child node\") n4 = Node(\"left grandchild node\") n1.left_child =n2 n1.right_child =n3 n2.left_child =n4"
+    },
+    {
+      "chapter": "Chapter 6",
+      "page": 11,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "ØPre-order traversal notation Pre-order tree traversal works as follows. 1.We start traversing with the root node 2.Next, we traverse the left sub-tree and call the preorder function with the left sub-tree recursively 3.Next, we visit the right sub-tree and call the preorder function with the right sub-tree recursively The pre-order traversal for this example tree would be A-B-D-G-H-E- C-F."
+    },
+    {
+      "chapter": "Chapter 6",
+      "page": 14,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "q Breadth-firsttraversal Breadth-first traversal starts from the root of the tree and then visits every node on the next level of the tree. Then, we move to the next level in the tree, and so on. This kind of tree traversal is breadth-first as it broadens the tree by traversing all the nodes in a level before going deep into the tree. Let's consider the following example tree and traverse it by using the breadth-first traversal method: Thus, the breadth-first tree traversal for this tree is as follows:4, 2, 8, 1, 3, 5, and 10."
+    },
+    {
+      "chapter": "Chapter 7",
+      "page": 14,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "✓To implement the hash table, we start by creating a class to hold hash table items. These need to have a key and a value since our hash table is a {key-value} store:"
+    },
+    {
+      "chapter": "Chapter 8",
+      "page": 5,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "◼ An undirected graph is a graph where the pairings representing the edges are unordered ◼ We will define an Undirected Graph ADT as a collection of vertices V = {v1, v2, ..., vn} The number of vertices is denoted by |V| = n Associated with this is a collection E of unordered pairs {vi, vj} termed edges which connect the vertices ◼ An undirected graph:"
+    },
+    {
+      "chapter": "Chapter 8",
+      "page": 6,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "◼An edge in an undirected graph can be traversed in either direction ◼An undirected graph is considered complete if it has the maximum number of edges connecting vertices ◼There are a number of data structures that can be used to implement abstract undirected graphs Adjacency matrices Adjacency lists"
+    },
+    {
+      "chapter": "Chapter 8",
+      "page": 15,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "◼The degree of a vertex must be modified to consider both cases: The out-degree of a vertex is The total number of edges that goes out from a vertex in the graph is called the outdegree of that vertex The in-degree of a vertex is The total number of edges that come into a vertex in the graph is called the indegree of that vertex ◼In this graph: in_degree(v1) = 0 out_degree(v1) = 2 in_degree(v5) = 2 out_degree(v5) = 3"
+    },
+    {
+      "chapter": "Chapter 8",
+      "page": 16,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "◼Some definitions: Source vertex: Vertices with an in-degree of zero are described as sources Sink vertex:Vertices with an out-degree of zero are described as sinks Isolated vertex: A node or vertex is called an isolated vertex when it has a degree of zero ◼In this graph: Sources: v1, v6, v7 Sinks: v2, v9"
+    },
+    {
+      "chapter": "Chapter 8",
+      "page": 20,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "◼ Strategies for implementing graphs: ◼ Adjacency lists"
+    },
+    {
+      "chapter": "Chapter 8",
+      "page": 20,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "use a set of graph nodes which contain a linked list storing the edges within each node for weighted graphs, each edge would be stored as a triple including the weight ◼ Adjacency matrices use a two dimensional array each position of the array represents an intersection between two vertices in the graph each intersection is represented by a boolean value indicating whether or not the two vertices are connected"
+    },
+    {
+      "chapter": "Chapter 8",
+      "page": 24,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "a list. Thus, generating a set of lists. ◼ This can be implemented in different ways. ◼ In the following representation: Vertices as a one dimensional array Edges as an array of linked list (the emanating edges of vertex 1 will be in the list of the first element, and so on, …"
+    },
+    {
+      "chapter": "Chapter 9",
+      "page": 3,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "Searching algorithms are categorized into two broad types: 1. The searching algorithm applied to list of items that are already sorted; that is, applied to the ordered set of items. 2. The searching algorithm applied to unordered set of items, which are not sorted."
+    },
+    {
+      "chapter": "Chapter 9",
+      "page": 4,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑A linear search simply examines each item in the search pool, one at a time, until either the target is found or until the pool is exhausted. ❑This approach does not assume the items in the search pool are in any particular order."
+    },
+    {
+      "chapter": "Chapter 9",
+      "page": 8,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑A binary search is a search strategy used to find elements within a sorted array or list; thus, the binary search algorithm finds a given item from the given sorted list of items. ❑It is a very fast and efficient algorithm to search an element, and the only drawback is that we need a sorted list. ❑The worst-case running time complexity of a binary search algorithm is O(log n) whereas the linear search has O(n)."
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 5,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑Given an unordered list, we compare adjacent elements in the list, and after each comparison, place them in the right order of magnitude. This works by swapping adjacent items if they are not in the correct order. The process is repeated n-1 times for a list of n items."
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 9,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑The implementation of the bubble sort algorithm would work in a double-nested loop, where the inner loop repeatedly compares and swaps the adjacent elements in each iteration for a given list, and the outer loop keeps track of how many times the inner loop should be repeated. The implementation of the inner loop is as follows:"
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 13,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑Insertion sorting algorithm gives a worst-case runtime complexity of O(n2), and a best-case complexity O(n). 13"
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 14,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑Another popular sorting algorithm is the selection sort. ❑The selection sorting algorithm begins by finding the smallest element in the list, and interchanges it with the data stored at the first position in the list."
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 18,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑After the first iteration of the quick sort algorithm, the chosen pivot point is placed in the list at its correct position."
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 24,
+      "color": "green",
+      "color_rgb": [
+        0.48627498745918274,
+        0.784313976764679,
+        0.4078429937362671
+      ],
+      "text": "❑A comparison of the complexities of different sorting algorithms is given in the following table:"
+    }
+  ],
+  "red": [
+    {
+      "chapter": "Chapter 8",
+      "page": 24,
+      "color": "red",
+      "color_rgb": [
+        0.9843140244483948,
+        0.36078399419784546,
+        0.5372549891471863
+      ],
+      "text": "This involves representing the set of vertices adjacent to each vertex as a list. Thus, generating a set of lists."
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 3,
+      "color": "red",
+      "color_rgb": [
+        0.9843140244483948,
+        0.36078399419784546,
+        0.5372549891471863
+      ],
+      "text": "CHAPTER GOALS ❑In this chapter, we'll study some of the most important and popular sorting techniques, including the following: oBubble sort oInsertion sort oSelection sort oQuick sort oHeap sort ❑In this chapter, we compare different sorting algorithms by considering their asymptotic behavior. Some of the algorithms are relatively easy to develop, but may perform poorly, whereas other algorithms are slightly more complex to implement, but show good performance in sorting the list when we have a long lists. 3"
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 4,
+      "color": "red",
+      "color_rgb": [
+        0.9843140244483948,
+        0.36078399419784546,
+        0.5372549891471863
+      ],
+      "text": "SORTING ALGORITHMS ❑Sorting means arranging all the items in a list in ascending order of their magnitude. ❑We will be discussing some of the most important sorting algorithms, which each have different performance attributes with respect to runtime complexity. ❑Sorting algorithms are categorized by their memory usage, complexity, recursion, and whether they are comparison-based, among other considerations. ❑Some of the algorithms use more CPU cycles, and, as such, have bad asymptotic values. ❑Other algorithms chew on more memory and other computing resources as they sort a number of values. ❑Another consideration is how sorting algorithms lend themselves to being expressed recursively, iteratively, or both. ❑There are algorithms that use comparison as the basis for sorting elements. An example of this is the bubble sort algorithm. Examples of a non-comparison sorting algorithm are the bucket sort and pigeonhole sort algorithms. 4"
+    },
+    {
+      "chapter": "Chapter 10",
+      "page": 22,
+      "color": "red",
+      "color_rgb": [
+        0.9843140244483948,
+        0.36078399419784546,
+        0.5372549891471863
+      ],
+      "text": "❑In Chapter 8, Graphs and Other Algorithms, we implemented a binary heap data structure. Our implementation always made sure that, after an element had been removed or added to a heap, the heap order property was maintained, by using the sink() and arrange() helper methods. ❑The heap data structure can be used to implement a sorting algorithm called the heap sort. As a recap, let's create a simple heap with the following items:"
+    }
+  ],
+  "yellow": [
+    {
+      "chapter": "Chapter 1",
+      "page": 8,
+      "color": "yellow",
+      "color_rgb": [
+        0.9803919792175293,
+        0.8039219975471497,
+        0.35294100642204285
+      ],
+      "text": "qData is a collection of facts and figures. It is also defined as a set of values in a particular format that refers to a single set of item values. qData can be managed in different ways, such as a logical or mathematical model for a particular organization of data, also called a data structure. qData structure is a specific way of storing and organizing data in the computer's memory so that these data can be easily retrieved and efficiently used."
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 9,
+      "color": "yellow",
+      "color_rgb": [
+        0.9803919792175293,
+        0.8039219975471497,
+        0.35294100642204285
+      ],
+      "text": "qA data structure is said to be linear if its elements combine to form any specific order. § Arrays § Queues § Stacks § Linked lists qNon-linear data structures represent data with a hierarchical relationship between different elements. § Graphs § Family of trees and § Table of contents"
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 10,
+      "color": "yellow",
+      "color_rgb": [
+        0.9803919792175293,
+        0.8039219975471497,
+        0.35294100642204285
+      ],
+      "text": "§ Data structures and algorithms are two of the core elements of a large and complex software project. § An algorithm processes and produces data. It can be defined as a finite set of logic or instructions, written in order to accomplish a certain predefined task. § It can be represented either as an informal description using a Flowchart or Pseudocode."
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 19,
+      "color": "yellow",
+      "color_rgb": [
+        0.9803919792175293,
+        0.8039219975471497,
+        0.35294100642204285
+      ],
+      "text": "qThe if...else and elif statements control the conditional execution of statements. qThe general format is a series of if and elif statements followed by a final else statement:"
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 32,
+      "color": "yellow",
+      "color_rgb": [
+        0.9803919792175293,
+        0.8039219975471497,
+        0.35294100642204285
+      ],
+      "text": "qFunctions that take other functions as arguments, or that return functions, are called higher-order functions. qPython 3 contains two built-in higher order functions: filter() and map(), which return an iterator. qThe map() and filter() functions transform each item into an iterable object."
+    },
+    {
+      "chapter": "Chapter 1",
+      "page": 35,
+      "color": "yellow",
+      "color_rgb": [
+        0.9803919792175293,
+        0.8039219975471497,
+        0.35294100642204285
+      ],
+      "text": "qBase case: To stop a recursive function turning into an infinite loop, we need at least one argument that tests for a terminating case to end the recursion. qRecursive functions are also useful for manipulating recursive data structures such as linked lists and trees. Base case: (low <= high)"
+    }
+  ],
+  "other": []
+}
