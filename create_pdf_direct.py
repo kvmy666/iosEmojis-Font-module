@@ -1,12 +1,8 @@
 """Generate apache_summary.pdf directly via HTML + WeasyPrint."""
 
+from _keywords import KEYWORDS_RED, KEYWORDS_ORANGE
 from datetime import date
 import re
-
-KEYWORDS_RED    = {"always","never","must","cannot","only","critical",
-                   "important","warning","do","not","must not"}
-KEYWORDS_ORANGE = {"note","required","ensure","before","secure","essential"}
-
 
 def colorize(text):
     """Wrap key words in colored spans."""

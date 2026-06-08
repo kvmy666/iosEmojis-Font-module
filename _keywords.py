@@ -1,0 +1,71 @@
+# Shared keyword sets for all summaries
+# RED = danger/attack/negative/critical terms
+KEYWORDS_RED = {
+    # functional
+    "always","never","must","cannot","only","do not","must not","not",
+    # attack/danger
+    "exploit","exploiting","exploited","exploits",
+    "attack","attacks","attacking","attacker","attackers",
+    "unauthorized","illicit","malicious","maliciously",
+    "breach","breached","breaches",
+    "compromise","compromised","compromises",
+    "inject","injection","injected","injecting",
+    "bypass","bypassed","bypassing",
+    "steal","steals","stealing","stolen",
+    "damage","damages","damaging","harmful","harm",
+    "dangerous","danger","risk","risks",
+    "vulnerable","vulnerability","vulnerabilities",
+    "expose","exposes","exposed","exposing","exposure",
+    "leak","leaks","leaking","leaked",
+    "corrupt","corrupts","corrupted",
+    "intercept","intercepted","intercepting",
+    "forge","forged","forging","forges",
+    "manipulate","manipulated","manipulating",
+    "spoof","spoofed","spoofing",
+    "phish","phishing","phished",
+    "hack","hacks","hacking","hacked","hacker","hackers",
+    "insecure","unsafe","weak","weakly","weakest","flaw","flaws",
+    "threat","threats","hostile","adversary","adversaries",
+    "deny","denial","ddos","dos",
+    "false","poison","poisoning","tamper","tampering",
+    "abuse","abused","misuse","deceive","deceiving","deceived",
+    "disclose","disclosure","disclosed","confidential",
+    # severity words
+    "critical","important","warning","severe","severity",
+    "prior","before","first",
+}
+
+# ORANGE = protection/defense/technical security terms
+KEYWORDS_ORANGE = {
+    # functional
+    "note","required","ensure","essential","every","all","any",
+    # protection
+    "protect","protects","protecting","protection","protected",
+    "secure","secures","securing","secured","security",
+    "encrypt","encrypts","encrypting","encrypted","encryption",
+    "decrypt","decrypts","decrypting","decrypted","decryption",
+    "hash","hashed","hashing","hashes",
+    "sanitize","sanitizes","sanitizing","sanitized","sanitization",
+    "validate","validates","validated","validating","validation",
+    "authenticate","authenticates","authentication","authenticated",
+    "authorize","authorizes","authorization","authorized",
+    "prevent","prevents","preventing","prevention","prevented",
+    "detect","detects","detecting","detection","detected",
+    "mitigate","mitigates","mitigating","mitigation","mitigated",
+    "defend","defense","defensive","defending","defends",
+    "safe","safely","safety","safeguard",
+    "verify","verifies","verified","verifying","verification",
+    "enforce","enforces","enforced","enforcing","enforcement",
+    "restrict","restricts","restricted","restricting","restriction",
+    "block","blocks","blocking","blocked",
+    "filter","filters","filtering","filtered",
+    "patch","patches","patched","patching",
+    "fix","fixes","fixing","fixed",
+    "sign","signed","signing","signature","signatures",
+    "token","tokens",
+    "certificate","certificates",
+    "whitelist","whitelisted","blacklist","blacklisted",
+    "key","keys","cryptographic","cryptography",
+    "salt","salted","salting",
+    "immutable","constant","integrity","confidentiality","availability",
+}

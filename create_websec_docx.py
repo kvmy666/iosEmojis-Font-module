@@ -1,4 +1,5 @@
 """Word document version of Web Application Security summary."""
+from _keywords import KEYWORDS_RED, KEYWORDS_ORANGE
 from docx import Document
 from docx.shared import RGBColor, Pt, Inches, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -13,10 +14,6 @@ NAVY  = RGBColor(0x1F, 0x39, 0x64)
 TEAL  = RGBColor(0x17, 0x6B, 0x7F)
 ORANGE= RGBColor(0xC0, 0x55, 0x00)
 
-KEY_RED    = {"always","never","must","cannot","only","critical","important",
-              "warning","not","never","first","prior","before"}
-KEY_ORANGE = {"note","required","ensure","secure","all","every","any","essential"}
-
 def shd(para, fill):
     pPr = para._p.get_or_add_pPr()
     e = OxmlElement('w:shd')
@@ -25,8 +22,8 @@ def shd(para, fill):
 
 def colorize(run, word):
     tok = word.lower().strip(".,;:()")
-    if tok in KEY_RED:   run.font.color.rgb = RED;    run.font.bold = True
-    elif tok in KEY_ORANGE: run.font.color.rgb = ORANGE; run.font.bold = True
+    if tok in KEYWORDS_RED:   run.font.color.rgb = RED;    run.font.bold = True
+    elif tok in KEYWORDS_ORANGE: run.font.color.rgb = ORANGE; run.font.bold = True
 
 def ch(doc, text):
     p = doc.add_paragraph()

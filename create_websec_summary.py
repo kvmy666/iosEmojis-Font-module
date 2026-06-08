@@ -4,13 +4,8 @@ Web Application Security – Study Summary
 Same format as Apache summary (blue terms, red keywords, exam tips/traps)
 """
 import re
+from _keywords import KEYWORDS_RED, KEYWORDS_ORANGE
 from datetime import date
-
-KEYWORDS_RED    = {"always","never","must","cannot","only","critical",
-                   "important","warning","do not","not","must not",
-                   "never","first","prior","before"}
-KEYWORDS_ORANGE = {"note","required","ensure","secure","essential","all",
-                   "every","any"}
 
 def colorize(text):
     parts = re.split(r'(\s+)', text)

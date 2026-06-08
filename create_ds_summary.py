@@ -3,14 +3,10 @@ Data Structures & Algorithms Study Summary
 60 items: 40 highlighted from PDFs + 20 additional definitions
 """
 import json, re
+from _keywords import KEYWORDS_RED, KEYWORDS_ORANGE
 from datetime import date
 
 # ── Color constants ─────────────────────────────────────────────
-KEYWORDS_RED    = {"always","never","must","cannot","only","critical",
-                   "important","warning","do not","not","must not","never"}
-KEYWORDS_ORANGE = {"note","required","ensure","before","constant","linear",
-                   "logarithmic","quadratic"}
-
 def colorize(text):
     parts = re.split(r'(\s+)', text)
     out = []

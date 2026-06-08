@@ -1,3 +1,4 @@
+from _keywords import KEYWORDS_RED, KEYWORDS_ORANGE
 from docx import Document
 from docx.shared import RGBColor, Pt, Inches, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -13,10 +14,6 @@ NAVY   = RGBColor(0x1F, 0x39, 0x64)   # chapter headings
 TEAL   = RGBColor(0x17, 0x6B, 0x7F)   # section headings
 BLACK  = RGBColor(0x00, 0x00, 0x00)
 ORANGE = RGBColor(0xC0, 0x55, 0x00)   # extra key words
-
-KEY_RED    = {"always", "never", "must", "cannot", "only", "must not",
-              "critical", "important", "warning", "do not", "not"}
-KEY_ORANGE = {"note", "required", "ensure", "before", "secure", "essential"}
 
 # ── Helpers ──────────────────────────────────────────────────────
 
@@ -42,10 +39,10 @@ def set_para_shading(para, fill_hex):
 def colorize_run(run, word):
     """Color individual word if it matches a keyword."""
     token = word.lower().strip(".,;:()")
-    if token in KEY_RED:
+    if token in KEYWORDS_RED:
         run.font.color.rgb = RED
         run.font.bold = True
-    elif token in KEY_ORANGE:
+    elif token in KEYWORDS_ORANGE:
         run.font.color.rgb = ORANGE
         run.font.bold = True
 

@@ -1,4 +1,5 @@
 """Create apache-style Word document for DS summary."""
+from _keywords import KEYWORDS_RED, KEYWORDS_ORANGE
 from docx import Document
 from docx.shared import RGBColor, Pt, Inches, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -16,9 +17,6 @@ BADGE_Y = RGBColor(0xFF, 0xB9, 0x00)
 BADGE_R = RGBColor(0xFF, 0x4B, 0x6E)
 ORANGE = RGBColor(0xC0, 0x55, 0x00)
 
-KEY_RED    = {"always","never","must","cannot","only","critical","important","warning","not"}
-KEY_ORANGE = {"note","required","ensure","constant","linear","logarithmic","quadratic"}
-
 def set_para_shading(para, fill_hex):
     pPr = para._p.get_or_add_pPr()
     shd = OxmlElement('w:shd')
@@ -29,9 +27,9 @@ def set_para_shading(para, fill_hex):
 
 def colorize_run(run, word):
     tok = word.lower().strip(".,;:()")
-    if tok in KEY_RED:
+    if tok in KEYWORDS_RED:
         run.font.color.rgb = RED; run.font.bold = True
-    elif tok in KEY_ORANGE:
+    elif tok in KEYWORDS_ORANGE:
         run.font.color.rgb = ORANGE; run.font.bold = True
 
 def add_chapter_heading(doc, text):
