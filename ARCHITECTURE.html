@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Fonts Module — How It Works</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --card: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #0a84ff;
+    --accent2: #30d158;
+    --accent3: #ff9f0a;
+    --accent4: #ff453a;
+    --text: #f0f0f5;
+    --muted: #8e8ea0;
+    --code-bg: #0d0d15;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  /* ── HERO ─────────────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #0a0a1a 0%, #0d1a2e 50%, #0a1420 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(10,132,255,0.12) 0%, transparent 70%);
+  }
+  .hero-emoji { font-size: 64px; display: block; margin-bottom: 24px; }
+  .hero h1 { font-size: 48px; font-weight: 700; letter-spacing: -1px; position: relative; }
+  .hero h1 span { color: var(--accent); }
+  .hero p { color: var(--muted); font-size: 18px; margin-top: 16px; position: relative; }
+  .badge {
+    display: inline-block;
+    background: rgba(10,132,255,0.15);
+    border: 1px solid rgba(10,132,255,0.3);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  /* ── LAYOUT ───────────────────────────────────────────────── */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 32px; }
+  .section { padding: 60px 0 20px; }
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .section-num.green { background: var(--accent2); }
+  .section-num.orange { background: var(--accent3); }
+  .section-num.red { background: var(--accent4); }
+  .section-num.purple { background: #bf5af2; }
+  .section-num.teal { background: #5ac8fa; }
+  .section-num.pink { background: #ff375f; }
+  h2 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  h3 { font-size: 18px; font-weight: 600; color: var(--accent); margin: 28px 0 12px; }
+  p { color: #c0c0d0; margin-bottom: 16px; }
+
+  /* ── CARDS ────────────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-val { font-size: 36px; font-weight: 700; color: var(--accent); }
+  .stat-label { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+  /* ── CODE ─────────────────────────────────────────────────── */
+  pre, code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, monospace;
+    font-size: 13.5px;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    line-height: 1.6;
+  }
+  code { background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 5px; font-size: 13px; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  .kw { color: #ff7ab2; }
+  .str { color: #fc6; }
+  .cmt { color: #5f6a7a; font-style: italic; }
+  .fn { color: #67b7a4; }
+  .var { color: #6eb4f7; }
+  .num { color: #d9c97c; }
+
+  /* ── TIMELINE ─────────────────────────────────────────────── */
+  .timeline { position: relative; padding-left: 40px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), #bf5af2);
+    border-radius: 2px;
+  }
+  .tl-item { position: relative; margin-bottom: 32px; }
+  .tl-dot {
+    position: absolute;
+    left: -33px;
+    top: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 3px rgba(10,132,255,0.25);
+  }
+  .tl-dot.green { background: var(--accent2); box-shadow: 0 0 0 3px rgba(48,209,88,0.25); }
+  .tl-dot.orange { background: var(--accent3); box-shadow: 0 0 0 3px rgba(255,159,10,0.25); }
+  .tl-dot.purple { background: #bf5af2; box-shadow: 0 0 0 3px rgba(191,90,242,0.25); }
+  .tl-label { font-weight: 700; color: var(--text); font-size: 15px; }
+  .tl-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .tl-highlight {
+    background: rgba(10,132,255,0.08);
+    border: 1px solid rgba(10,132,255,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-size: 13.5px;
+  }
+  .tl-highlight.green {
+    background: rgba(48,209,88,0.08);
+    border-color: rgba(48,209,88,0.2);
+    color: #9fffb3;
+  }
+
+  /* ── TABLE ────────────────────────────────────────────────── */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0 28px; }
+  th {
+    background: var(--surface);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px;
+    color: #c0c0d0;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 500; color: var(--text); }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: monospace;
+  }
+  .tag-blue { background: rgba(10,132,255,0.15); color: #6eb4f7; }
+  .tag-green { background: rgba(48,209,88,0.15); color: #57e98d; }
+  .tag-orange { background: rgba(255,159,10,0.15); color: #ffb340; }
+  .tag-red { background: rgba(255,69,58,0.15); color: #ff6961; }
+
+  /* ── PHASES ───────────────────────────────────────────────── */
+  .phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 4px; margin: 24px 0; }
+  .phase {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+  .phase-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .phase-title { font-size: 16px; font-weight: 700; margin: 6px 0 4px; }
+  .phase-sub { font-size: 12px; color: var(--muted); }
+  .phase-icon { font-size: 28px; margin-bottom: 12px; }
+  .phase-list { list-style: none; margin-top: 14px; }
+  .phase-list li { font-size: 12.5px; color: #9898b0; padding: 3px 0; padding-left: 14px; position: relative; }
+  .phase-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+
+  /* ── LESSON ───────────────────────────────────────────────── */
+  .lesson {
+    display: flex; gap: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .lesson-num { font-size: 24px; font-weight: 800; color: var(--accent); opacity: 0.4; flex-shrink: 0; line-height: 1; }
+  .lesson-title { font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px; }
+  .lesson-body { font-size: 13.5px; color: #9898b0; }
+
+  /* ── CALLOUT ──────────────────────────────────────────────── */
+  .callout {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0 24px;
+    border-left: 4px solid;
+  }
+  .callout.blue { background: rgba(10,132,255,0.07); border-color: var(--accent); }
+  .callout.green { background: rgba(48,209,88,0.07); border-color: var(--accent2); }
+  .callout.orange { background: rgba(255,159,10,0.07); border-color: var(--accent3); }
+  .callout.red { background: rgba(255,69,58,0.07); border-color: var(--accent4); }
+  .callout-title { font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .callout.blue .callout-title { color: var(--accent); }
+  .callout.green .callout-title { color: var(--accent2); }
+  .callout.orange .callout-title { color: var(--accent3); }
+  .callout.red .callout-title { color: var(--accent4); }
+  .callout p { font-size: 14px; margin: 0; }
+
+  /* ── MERMAID ──────────────────────────────────────────────── */
+  .mermaid-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+  .mermaid { display: flex; justify-content: center; }
+
+  /* ── FILE TREE ────────────────────────────────────────────── */
+  .filetree {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    font-family: 'SF Mono', Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .ft-dir { color: var(--accent); font-weight: 600; }
+  .ft-file { color: #c0c0d0; }
+  .ft-comment { color: var(--muted); font-size: 12px; margin-left: 8px; }
+  .ft-highlight { color: var(--accent2); font-weight: 700; }
+
+  /* ── OVERLAY DIAGRAM ──────────────────────────────────────── */
+  .overlay-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: start;
+    margin: 24px 0;
+  }
+  .overlay-col { }
+  .overlay-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 10px; }
+  .overlay-file {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: monospace;
+    font-size: 12.5px;
+    margin-bottom: 6px;
+    color: #c0c0d0;
+    display: flex; justify-content: space-between;
+  }
+  .overlay-file.replaced { border-color: var(--accent); background: rgba(10,132,255,0.07); color: var(--text); }
+  .overlay-file.added { border-color: var(--accent2); background: rgba(48,209,88,0.07); color: #9fffb3; }
+  .overlay-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: var(--accent);
+    padding-top: 24px;
+  }
+  .file-size { color: var(--muted); font-size: 11px; }
+
+  /* ── FOOTER ───────────────────────────────────────────────── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 60px;
+  }
+
+  /* ── TOC ──────────────────────────────────────────────────── */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin: 40px 0 0;
+  }
+  .toc-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 16px; }
+  .toc a {
+    display: block;
+    color: #9898b0;
+    text-decoration: none;
+    padding: 5px 0;
+    font-size: 14px;
+    transition: color 0.15s;
+  }
+  .toc a:hover { color: var(--accent); }
+  .toc a span { color: var(--accent); margin-right: 8px; font-weight: 700; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 32px; }
+    .overlay-grid { grid-template-columns: 1fr; }
+    .overlay-arrow { transform: rotate(90deg); }
+    .phases { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-emoji"></span>
+  <h1>Apple Fonts &amp; Emoji<br><span>How It Works</span></h1>
+  <p>A visual guide to building a KernelSU font replacement module from scratch</p>
+  <div class="badge">v1.3.0 · Android 16 · KernelSU Next</div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <a href="#s1"><span>01</span> The Big Picture</a>
+    <a href="#s2"><span>02</span> How Android Loads Fonts</a>
+    <a href="#s3"><span>03</span> The Boot Sequence — When Our Code Runs</a>
+    <a href="#s4"><span>04</span> KernelSU Magic-Mount</a>
+    <a href="#s5"><span>05</span> Files in the Module</a>
+    <a href="#s6"><span>06</span> post-fs-data.sh — The Heart</a>
+    <a href="#s7"><span>07</span> Binary Patching Font Weight</a>
+    <a href="#s8"><span>08</span> The Emoji Bug — A Debugging Story</a>
+    <a href="#s9"><span>09</span> OEM Compatibility</a>
+    <a href="#s10"><span>10</span> The WebUI</a>
+    <a href="#s11"><span>11</span> Lessons Learned</a>
+    <a href="#s12"><span>12</span> Full Architecture Diagram</a>
+  </div>
+
+  <!-- ── SECTION 1 ──────────────────────────────────────────── -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2>The Big Picture</h2>
+    </div>
+
+    <div class="card-grid">
+      <div class="stat-card">
+        <div class="stat-val" style="color:#30d158">SF Pro</div>
+        <div class="stat-label">replaces system Latin font</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:#0a84ff">SF Arabic</div>
+        <div class="stat-label">replaces all Arabic fonts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:#ff9f0a">🍎 Emoji</div>
+        <div class="stat-label">replaces NotoColorEmoji.ttf</div>
+      </div>
+    </div>
+
+    <p>The core idea is simple: <strong>Android reads font files from <code>/system/fonts/</code> at boot. If you control what files are there, you control what every app renders.</strong> The problem is that <code>/system</code> is a read-only partition (erofs). We solve this with KernelSU's magic-mount — we project a shadow over the real partition without ever touching it.</p>
+
+    <div class="callout blue">
+      <div class="callout-title">Key insight</div>
+      <p>We never modify the system partition. We never flash anything permanent. KernelSU overlays our font files on top of the real <code>/system/fonts/</code> using a Linux kernel feature called OverlayFS. Remove the module, and everything reverts instantly.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2 ──────────────────────────────────────────── -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num green">02</div>
+      <h2>How Android Loads Fonts</h2>
+    </div>
+
+    <h3>The config file chain</h3>
+    <p>Android's text engine (Minikin) reads font configuration from several XML files. On Android 16 the chain looks like this:</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label"><code>font_fallback.xml</code></div>
+        <div class="tl-sub">The REAL config — Minikin reads this first and uses it for all font resolution</div>
+        <div class="tl-highlight">Root-only readable. References exact filenames like <code>NotoColorEmoji.ttf</code>. This is why our Apple emoji must be named exactly that.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#bf5af2; box-shadow:0 0 0 3px rgba(191,90,242,0.25)"></div>
+        <div class="tl-label"><code>fonts_customization.xml</code></div>
+        <div class="tl-sub">OEM/module overrides — replaces named families like "sans-serif"</div>
+        <div class="tl-highlight" style="background:rgba(191,90,242,0.08); border-color:rgba(191,90,242,0.2); color:#d4a0ff">We write this file at boot to replace sans-serif with SF Pro — works universally across all OEMs.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#8e8ea0; box-shadow:none"></div>
+        <div class="tl-label"><code>fonts.xml</code></div>
+        <div class="tl-sub" style="color:#ff453a">DEPRECATED — kept only for apps that parse it directly, not for Minikin</div>
+      </div>
+    </div>
+
+    <div class="callout red">
+      <div class="callout-title">Lesson we learned the hard way</div>
+      <p><code>fonts.xml</code> literally says "DEPRECATED: This XML file is no longer a source of the font files installed in the system." We spent time injecting emoji into fonts.xml — which had zero effect because Minikin wasn't reading it for that.</p>
+    </div>
+
+    <h3>How Minikin picks an emoji font</h3>
+    <pre><code><span class="cmt">When you type 😀, Minikin does this:</span>
+
+<span class="num">1.</span> Look up Unicode codepoint → <span class="str">U+1F600</span>
+<span class="num">2.</span> Find a font family with lang=<span class="str">"und-Zsye"</span> (emoji script) in font_fallback.xml
+<span class="num">3.</span> First listed: → <span class="fn">NotoColorEmoji.ttf</span>
+<span class="num">4.</span> Search for that file in <span class="var">/system/fonts/</span>
+<span class="num">5.</span> Load it and render the glyph
+
+<span class="cmt">Step 4 is where we win: our Apple emoji IS at /system/fonts/NotoColorEmoji.ttf</span></code></pre>
+
+    <h3>Color emoji formats compared</h3>
+    <table>
+      <thead>
+        <tr><th>Format</th><th>Table</th><th>Used by</th><th>Size</th><th>Type</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CBDT/CBLC</td>
+          <td><span class="tag tag-blue">CBDT</span></td>
+          <td>Our Apple emoji repack</td>
+          <td>~111 MB</td>
+          <td>Color bitmap (PNG strips)</td>
+        </tr>
+        <tr>
+          <td>COLRv0</td>
+          <td><span class="tag tag-green">COLR</span></td>
+          <td>Stock Android 16 Noto</td>
+          <td>~2.8 MB</td>
+          <td>Color vector (compact)</td>
+        </tr>
+        <tr>
+          <td>COLRv1</td>
+          <td><span class="tag tag-green">COLR</span></td>
+          <td>Newest emoji fonts</td>
+          <td>~3–5 MB</td>
+          <td>Color vector (gradient support)</td>
+        </tr>
+        <tr>
+          <td>sbix</td>
+          <td><span class="tag tag-orange">sbix</span></td>
+          <td>Apple native (macOS/iOS)</td>
+          <td>~50 MB</td>
+          <td>Color bitmap (PNG per glyph)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SECTION 3 ──────────────────────────────────────────── -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num orange">03</div>
+      <h2>The Boot Sequence</h2>
+    </div>
+
+    <p>Timing matters enormously. We have a very specific window to run our code — after <code>/data</code> is mounted but before Zygote starts.</p>
+
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#8e8ea0"></div>
+          <div class="tl-label">Power on → Bootloader → Kernel</div>
+          <div class="tl-sub">Kernel mounts partitions: /, /system (read-only erofs), /data</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-label">KernelSU hooks in (kernel-level)</div>
+          <div class="tl-sub">OverlayFS activated — our module files are projected over /system/fonts/</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#30d158; box-shadow:0 0 0 3px rgba(48,209,88,0.25)"></div>
+          <div class="tl-label">🟢 post-fs-data phase ← OUR CODE RUNS HERE</div>
+          <div class="tl-sub">post-fs-data.sh executes as root</div>
+          <div class="tl-highlight green">
+            ✓ /data is mounted — we can read config.json<br>
+            ✓ /system is overlaid — our fonts are visible<br>
+            ✓ Zygote has NOT started — fonts haven't been loaded yet
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#ff453a; box-shadow:0 0 0 3px rgba(255,69,58,0.25)"></div>
+          <div class="tl-label">🔴 Zygote starts ← point of no return</div>
+          <div class="tl-sub">Reads font_fallback.xml + fonts_customization.xml, loads fonts into memory cache</div>
+          <div class="tl-highlight" style="background:rgba(255,69,58,0.08); border-color:rgba(255,69,58,0.2); color:#ff9999">
+            All apps fork from Zygote and inherit its font cache. If we ran code here we'd be too late.
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#8e8ea0"></div>
+          <div class="tl-label">system_server → Boot completed</div>
+          <div class="tl-sub">service.sh runs (writes perf.log, then exits — no daemon)</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:#30d158; box-shadow:0 0 0 3px rgba(48,209,88,0.25)"></div>
+          <div class="tl-label">User unlocks screen — sees Apple fonts 🍎</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4 ──────────────────────────────────────────── -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num" style="background:#bf5af2">04</div>
+      <h2>KernelSU Magic-Mount</h2>
+    </div>
+
+    <p>KernelSU uses <strong>OverlayFS</strong> — a Linux kernel feature — to project our module's files over <code>/system</code>. The real partition is never touched.</p>
+
+    <div class="overlay-grid">
+      <div class="overlay-col">
+        <div class="overlay-title">Real /system/fonts/</div>
+        <div class="overlay-file">Roboto.ttf <span class="file-size">4.8 MB</span></div>
+        <div class="overlay-file">NotoColorEmoji.ttf <span class="file-size">2.8 MB</span></div>
+        <div class="overlay-file">NotoSans-Regular.ttf <span class="file-size">~12 MB</span></div>
+        <div class="overlay-file">NotoNaskhArabic-*.ttf <span class="file-size">various</span></div>
+      </div>
+      <div class="overlay-arrow">→</div>
+      <div class="overlay-col">
+        <div class="overlay-title">After magic-mount</div>
+        <div class="overlay-file">Roboto.ttf <span class="file-size">4.8 MB (unchanged)</span></div>
+        <div class="overlay-file replaced">NotoColorEmoji.ttf <span class="file-size">111 MB ← Apple emoji 🍎</span></div>
+        <div class="overlay-file">NotoSans-Regular.ttf <span class="file-size">(unchanged)</span></div>
+        <div class="overlay-file">NotoNaskhArabic-*.ttf <span class="file-size">(unchanged)</span></div>
+        <div class="overlay-file added">SysFont-Regular.ttf <span class="file-size">25 MB ← SF Pro added</span></div>
+        <div class="overlay-file added">SF-Arabic.ttf <span class="file-size">837 KB ← SF Arabic added</span></div>
+      </div>
+    </div>
+
+    <h3>The rule</h3>
+    <div class="filetree">
+      <span class="ft-dir">/data/adb/modules/AppleFonts/</span><br>
+      &nbsp;&nbsp;<span class="ft-dir">system/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-dir">fonts/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-highlight">NotoColorEmoji.ttf</span><span class="ft-comment">← appears at /system/fonts/NotoColorEmoji.ttf</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-highlight">SysFont-Regular.ttf</span><span class="ft-comment">← appears at /system/fonts/SysFont-Regular.ttf</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-highlight">SF-Arabic.ttf</span><span class="ft-comment">← appears at /system/fonts/SF-Arabic.ttf</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-dir">etc/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-highlight">fonts_customization.xml</span><span class="ft-comment">← overlays /system/etc/fonts_customization.xml</span>
+    </div>
+
+    <div class="callout blue">
+      <div class="callout-title">The rule</div>
+      <p>Whatever you put in <code>system/</code> inside your module directory gets overlaid on the real <code>/system</code> at the matching path. Files not in your module remain visible from the real partition.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5 ──────────────────────────────────────────── -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num" style="background:#5ac8fa">05</div>
+      <h2>Files in This Module</h2>
+    </div>
+
+    <div class="filetree">
+      <span class="ft-dir">AppleFonts/</span><br>
+      │<br>
+      ├── <span class="ft-highlight">module.prop</span><span class="ft-comment">← Identity card: version, updateJson URL</span><br>
+      ├── <span class="ft-highlight">customize.sh</span><span class="ft-comment">← Runs ONCE at install time</span><br>
+      ├── <span class="ft-highlight">post-fs-data.sh</span><span class="ft-comment">← Runs on EVERY BOOT before Zygote</span><br>
+      ├── <span class="ft-file">service.sh</span><span class="ft-comment">← Runs after boot_completed (boot watchdog)</span><br>
+      ├── <span class="ft-file">action.sh</span><span class="ft-comment">← Runs when user taps "Run" in KSU manager</span><br>
+      ├── <span class="ft-file">uninstall.sh</span><span class="ft-comment">← Cleans up when module is uninstalled</span><br>
+      │<br>
+      ├── <span class="ft-dir">system/</span><br>
+      │&nbsp;&nbsp; ├── <span class="ft-dir">fonts/</span><span class="ft-comment">← Font files (magic-mounted over /system/fonts/)</span><br>
+      │&nbsp;&nbsp; └── <span class="ft-dir">etc/</span><br>
+      │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; └── <span class="ft-file">fonts_customization.xml</span><span class="ft-comment">← Static sans-serif fallback</span><br>
+      │<br>
+      ├── <span class="ft-dir">webroot/</span><span class="ft-comment">← WebUI (HTML/CSS/JS, served by KSU WebView)</span><br>
+      │&nbsp;&nbsp; ├── <span class="ft-file">index.html</span><br>
+      │&nbsp;&nbsp; ├── <span class="ft-file">style.css</span><br>
+      │&nbsp;&nbsp; └── <span class="ft-file">app.js</span><br>
+      │<br>
+      └── <span class="ft-dir">scripts/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="ft-highlight">debug.sh</span><span class="ft-comment">← Diagnostic script</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp; ├── <span class="ft-file">apply.sh</span><span class="ft-comment">← Called by WebUI to save settings</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp; └── <span class="ft-file">reset.sh</span><span class="ft-comment">← Called by WebUI to reset defaults</span>
+    </div>
+
+    <h3>module.prop — the identity card</h3>
+    <pre><code>id=AppleFonts                     <span class="cmt"># Unique ID — must not clash with other modules</span>
+name=Apple Fonts &amp; Emoji
+version=v1.3.0
+versionCode=<span class="num">130</span>                   <span class="cmt"># Integer — KSU compares this for updates</span>
+author=Abdulkarim &amp; M
+updateJson=https://raw.githubusercontent.com/...  <span class="cmt"># KSU fetches this to check for updates</span></code></pre>
+
+    <p>The <code>updateJson</code> field points to a JSON file on GitHub. KernelSU fetches it periodically and shows an update badge if <code>versionCode</code> in the JSON is higher than the installed one.</p>
+  </div>
+
+  <!-- ── SECTION 6 ──────────────────────────────────────────── -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num" style="background:#ff375f">06</div>
+      <h2>post-fs-data.sh — The Heart</h2>
+    </div>
+
+    <h3>Reading config with no jq</h3>
+    <p><code>jq</code> doesn't exist on Android's minimal shell. We parse JSON with <code>grep -o</code>:</p>
+    <pre><code><span class="cmt"># grep -o extracts matching text only</span>
+_W=$(<span class="fn">grep</span> -o <span class="str">'"wght":[0-9]*'</span> <span class="str">"$CONFIG"</span> | <span class="fn">grep</span> -o <span class="str">'[0-9]*$'</span>)
+<span class="kw">[</span> -n <span class="str">"$_W"</span> <span class="kw">]</span> &amp;&amp; WGHT=<span class="var">$_W</span>
+
+<span class="cmt"># Pattern '"wght":[0-9]*' matches: "wght":300</span>
+<span class="cmt"># Second grep extracts just the number: 300</span></code></pre>
+
+    <h3>Toggling fonts — the filesystem is the switch</h3>
+    <pre><code><span class="kw">if</span> [ <span class="str">"$EMOJI"</span> = <span class="str">"false"</span> ]; <span class="kw">then</span>
+  <span class="cmt"># Move Apple emoji OUT of magic-mount → stock Noto becomes visible</span>
+  [ -f <span class="str">"$FONTS/NotoColorEmoji.ttf"</span> ] &amp;&amp; <span class="fn">mv</span> <span class="str">"$FONTS/NotoColorEmoji.ttf"</span> <span class="str">"$STORE/"</span>
+<span class="kw">else</span>
+  <span class="cmt"># Move Apple emoji BACK IN → KSU overlays it again</span>
+  [ -f <span class="str">"$STORE/NotoColorEmoji.ttf"</span> ] &amp;&amp; <span class="fn">mv</span> <span class="str">"$STORE/NotoColorEmoji.ttf"</span> <span class="str">"$FONTS/"</span>
+<span class="kw">fi</span></code></pre>
+
+    <div class="callout green">
+      <div class="callout-title">Elegant design</div>
+      <p>No separate "disable flag" config needed at the overlay level. The presence or absence of the file in the module directory IS the toggle. Move it out = disabled. Move it in = enabled.</p>
+    </div>
+
+    <h3>Rewriting fonts.xml with awk</h3>
+    <p>We need to find the <code>&lt;family name="sans-serif"&gt;</code> block, replace it with SF Pro, and output the whole 1700+ line file. <code>awk</code> does this in one command with no external dependencies:</p>
+    <pre><code><span class="fn">awk</span> -v do_latin=<span class="str">"$LATIN"</span> -v wght=<span class="str">"$WGHT"</span> <span class="str">'
+  { lines[NR] = $0 }          # PASS 1: store every line
+
+  END {
+    # PASS 2: find sans-serif block boundaries
+    for (i = 1; i &lt;= NR; i++) {
+      if (lines[i] ~ /name="sans-serif"/) {
+        # scan backward for &lt;family
+        for (j = i; j &gt;= 1; j--)
+          if (lines[j] ~ /&lt;family/) { ss = j; break }
+        # scan forward for &lt;/family&gt;
+        for (k = i; k &lt;= NR; k++)
+          if (lines[k] ~ /&lt;\/family&gt;/) { se = k; break }
+      }
+    }
+    # Replace lines ss..se with SF Pro block, print rest unchanged
+    for (i = 1; i &lt;= NR; i++) {
+      if (i == ss)  print sf_pro_block
+      if (i &gt;= ss &amp;&amp; i &lt;= se) continue
+      print lines[i]
+    }
+  }
+'</span> /system/etc/fonts.xml &gt; <span class="str">"$MOD_XML"</span></code></pre>
+
+    <p>This is the <strong>two-pass awk pattern</strong>: read everything into memory in the main block, do complex multi-line analysis in the <code>END</code> block. Standard technique for XML-like transformations in shell.</p>
+  </div>
+
+  <!-- ── SECTION 7 ──────────────────────────────────────────── -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-num" style="background:#30d158">07</div>
+      <h2>Binary Patching Font Weight</h2>
+    </div>
+
+    <p>SF Pro is a <strong>variable font</strong> — one file that contains all weights (Thin to Black). The <code>fvar</code> OpenType table stores the default axis values. We surgically edit those 4 bytes at boot.</p>
+
+    <h3>OpenType Fixed 16.16 format</h3>
+    <table>
+      <thead><tr><th>Weight</th><th>Decimal</th><th>Hex</th><th>Fixed 16.16 bytes</th></tr></thead>
+      <tbody>
+        <tr><td>Thin (100)</td><td>100</td><td>0x0064</td><td><span class="tag tag-blue">00 64 00 00</span></td></tr>
+        <tr><td>Light (300)</td><td>300</td><td>0x012C</td><td><span class="tag tag-green">01 2C 00 00</span></td></tr>
+        <tr><td>Regular (400)</td><td>400</td><td>0x0190</td><td><span class="tag tag-orange">01 90 00 00</span></td></tr>
+        <tr><td>Bold (700)</td><td>700</td><td>0x02BC</td><td><span class="tag tag-red">02 BC 00 00</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>The patch process</h3>
+    <pre><code><span class="cmt"># Step 1: Read font header — how many tables?</span>
+N=$(<span class="fn">_hex2dec</span> <span class="str">"$(_rbytes "$FONT" 4 2)"</span>)
+
+<span class="cmt"># Step 2: Scan table directory for "fvar" tag (hex: 66766172)</span>
+<span class="kw">while</span> [ <span class="str">"$i"</span> -lt <span class="str">"$N"</span> ]; <span class="kw">do</span>
+  BASE=$((12 + i * 16))
+  <span class="kw">if</span> [ <span class="str">"$(_rbytes "$FONT" "$BASE" 4)"</span> = <span class="str">"66766172"</span> ]; <span class="kw">then</span>
+    FVAR_OFF=$(<span class="fn">_hex2dec</span> <span class="str">"$(_rbytes "$FONT" $((BASE+8)) 4)"</span>)
+    <span class="kw">break</span>
+  <span class="kw">fi</span>
+  i=$((i + 1))
+<span class="kw">done</span>
+
+<span class="cmt"># Step 3: Inside fvar, find "wght" axis (hex: 77676874)</span>
+<span class="cmt"># Step 4: At offset +8 write new Fixed 16.16 value</span>
+<span class="fn">printf</span> <span class="str">'\x01\x2c\x00\x00'</span> | <span class="fn">dd</span> of=<span class="str">"$FONT"</span> bs=1 seek=<span class="var">$DEF_OFF</span> count=4 conv=notrunc</code></pre>
+
+    <div class="callout orange">
+      <div class="callout-title">Why dd and od?</div>
+      <p>These are the only byte-level I/O tools guaranteed on Android's minimal shell. <code>od -An -tx1</code> prints bytes as hex pairs. <code>dd bs=1 skip=N count=4</code> reads 4 bytes from an offset. No Python, no xxd needed.</p>
+    </div>
+  </div>
+
+  <!-- ── SECTION 8 ──────────────────────────────────────────── -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-num red">08</div>
+      <h2>The Emoji Bug — A Debugging Story</h2>
+    </div>
+
+    <p>This is the real story. Understanding bugs is as important as writing features.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#8e8ea0"></div>
+        <div class="tl-label">v1.0.0 — First attempt</div>
+        <div class="tl-sub">Shipped emoji as NotoColorEmoji.ttf. User reported Android emoji still showing.</div>
+        <div class="tl-highlight" style="background:rgba(255,69,58,0.08); border-color:rgba(255,69,58,0.2); color:#ff9999">
+          ❌ Wrong theory: assumed com.android.i18n APEX was shadowing our file.
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#ff453a; box-shadow:0 0 0 3px rgba(255,69,58,0.25)"></div>
+        <div class="tl-label">v1.2.0 — Wrong fix</div>
+        <div class="tl-sub">Renamed to AppleColorEmoji.ttf, injected into fonts.xml</div>
+        <div class="tl-highlight" style="background:rgba(255,69,58,0.08); border-color:rgba(255,69,58,0.2); color:#ff9999">
+          ❌ fonts.xml is DEPRECATED. Minikin reads font_fallback.xml which only references NotoColorEmoji.ttf.
+          Stock Noto won every time.
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot green"></div>
+        <div class="tl-label">v1.3.0 — Correct fix</div>
+        <div class="tl-sub">Name Apple emoji NotoColorEmoji.ttf. Magic-mount delivers it to font_fallback.xml's reference.</div>
+        <div class="tl-highlight green">✓ User reports: "it works"</div>
+      </div>
+    </div>
+
+    <h3>The APEX dead-end</h3>
+    <pre><code><span class="cmt"># We checked the actual device:</span>
+$ <span class="fn">find</span> /apex/com.android.i18n -name <span class="str">"*.ttf"</span>
+<span class="cmt">(no output — no emoji fonts in APEX at all)</span>
+
+$ <span class="fn">ls</span> /apex/com.android.i18n/etc/
+icu/  <span class="cmt">(only ICU locale data — no fonts)</span></code></pre>
+
+    <div class="callout orange">
+      <div class="callout-title">Lesson</div>
+      <p>Our APEX theory was based on older Android documentation where APEX <em>did</em> contain emoji. Android 16 reorganized this. Don't trust assumptions — check the actual device with <code>adb shell ls</code> and <code>find</code>.</p>
+    </div>
+
+    <h3>The emoji size bug</h3>
+    <p>After fixing the naming, emoji were showing as Apple but appeared smaller than stock Noto. Root cause: the glyph <strong>advance width</strong> in the 111MB file was 2048 units (1.0× em) vs 2400 units (1.17× em) needed to match the reference file. We patched all hmtx advance widths + OS/2 + hhea metrics to fix the proportions.</p>
+  </div>
+
+  <!-- ── SECTION 9 ──────────────────────────────────────────── -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <div class="section-num" style="background:#64d2ff">09</div>
+      <h2>OEM Compatibility</h2>
+    </div>
+
+    <p>Samsung, Xiaomi, and other OEMs customize the font system heavily. Here's how we handle it.</p>
+
+    <table>
+      <thead><tr><th>OEM</th><th>Default font</th><th>Our fix</th></tr></thead>
+      <tbody>
+        <tr><td>Stock AOSP</td><td>Roboto</td><td>fonts_customization.xml replaces sans-serif</td></tr>
+        <tr><td>Samsung One UI</td><td>SamsungSans</td><td>Auto-detected, SF Pro copied under OEM filename</td></tr>
+        <tr><td>Xiaomi MIUI/HyperOS</td><td>MiSans</td><td>Auto-detected, same approach</td></tr>
+        <tr><td>OnePlus OxygenOS</td><td>OnePlus Slate / SysFont</td><td>Primary dev device — natively supported</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Alias detection in customize.sh</h3>
+    <pre><code><span class="cmt"># Parse the device's own fonts.xml to find OEM font filenames</span>
+<span class="fn">awk</span> <span class="str">'
+  /name="sans-serif"/ { in_ss=1 }
+  in_ss &amp;&amp; /style="normal"/ {
+    if (match($0, /&gt;[A-Za-z0-9._-]+\.ttf/))
+      print substr($0, RSTART+1, RLENGTH-1)  # extract filename
+  }
+  in_ss &amp;&amp; /&lt;\/family&gt;/ { in_ss=0; exit }
+'</span> /system/etc/fonts.xml | <span class="kw">while</span> <span class="fn">read</span> OEM_FONT; <span class="kw">do</span>
+  <span class="kw">case</span> <span class="str">"$OEM_FONT"</span> <span class="kw">in</span>
+    SysFont*|Roboto*|NotoColor*|SF-*) <span class="kw">continue</span> ;;  <span class="cmt"># skip our own</span>
+  <span class="kw">esac</span>
+  <span class="cmt"># On Samsung: creates SamsungSans-Regular.ttf → SF Pro</span>
+  <span class="fn">cp</span> <span class="str">"$FONTS/SysFont-Regular.ttf"</span> <span class="str">"$FONTS/$OEM_FONT"</span>
+<span class="kw">done</span></code></pre>
+  </div>
+
+  <!-- ── SECTION 10 ──────────────────────────────────────────── -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <div class="section-num" style="background:#ff9f0a">10</div>
+      <h2>The WebUI</h2>
+    </div>
+
+    <p>KernelSU has a built-in WebView that serves files from the module's <code>webroot/</code> directory. No app installation required.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">User moves weight slider in browser</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-label">WebUI JavaScript POSTs to KSU API</div>
+        <div class="tl-highlight"><code>fetch('/api', { method: 'POST', body: JSON.stringify({wght: 300}) })</code></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#bf5af2; box-shadow:0 0 0 3px rgba(191,90,242,0.25)"></div>
+        <div class="tl-label">KSU WebView executes scripts/apply.sh</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot green"></div>
+        <div class="tl-label">apply.sh writes /data/adb/AppleFonts/config.json</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#8e8ea0"></div>
+        <div class="tl-label">Next reboot → post-fs-data.sh reads config.json → applies settings</div>
+      </div>
+    </div>
+
+    <div class="callout blue">
+      <div class="callout-title">Why reboot required?</div>
+      <p>Font changes happen at the Zygote level — the parent process all apps fork from. Changing fonts requires restarting every app. The only practical way is a full reboot.</p>
+    </div>
+
+    <pre><code><span class="cmt">// config.json</span>
+{
+  <span class="str">"wght"</span>: <span class="num">300</span>,     <span class="cmt">// font weight 100-1000</span>
+  <span class="str">"latin"</span>: <span class="kw">true</span>,   <span class="cmt">// SF Pro enabled</span>
+  <span class="str">"arabic"</span>: <span class="kw">true</span>,  <span class="cmt">// SF Arabic enabled</span>
+  <span class="str">"geeza"</span>: <span class="kw">false</span>,  <span class="cmt">// Geeza Pro</span>
+  <span class="str">"cocon"</span>: <span class="kw">false</span>,  <span class="cmt">// Cocon Next Arabic</span>
+  <span class="str">"emoji"</span>: <span class="kw">true</span>    <span class="cmt">// Apple emoji</span>
+}</code></pre>
+  </div>
+
+  <!-- ── SECTION 11 ──────────────────────────────────────────── -->
+  <div class="section" id="s11">
+    <div class="section-header">
+      <div class="section-num" style="background:#ffd60a; color:#000">11</div>
+      <h2>Lessons Learned</h2>
+    </div>
+
+    <div class="lesson">
+      <div class="lesson-num">1</div>
+      <div>
+        <div class="lesson-title">"Deprecated" warnings are literal</div>
+        <div class="lesson-body">fonts.xml says "DEPRECATED" at the top. We assumed that meant "deprecated for apps." It means "deprecated as a system font config source." Minikin uses font_fallback.xml now. Always read warnings at face value.</div>
+      </div>
+    </div>
+    <div class="lesson" style="border-left-color: var(--accent2)">
+      <div class="lesson-num" style="color:var(--accent2)">2</div>
+      <div>
+        <div class="lesson-title">Debug with the real device, not assumptions</div>
+        <div class="lesson-body">We theorized about APEX shadowing for days. The device had no APEX emoji at all. The right approach: <code>adb shell</code> → <code>ls</code>, <code>find</code>, <code>cat</code> → see what's actually there.</div>
+      </div>
+    </div>
+    <div class="lesson" style="border-left-color: var(--accent3)">
+      <div class="lesson-num" style="color:var(--accent3)">3</div>
+      <div>
+        <div class="lesson-title">Check file permissions in debug scripts</div>
+        <div class="lesson-body"><code>font_fallback.xml</code> is root-only readable. Our debug script ran as ADB shell (non-root) and couldn't see it. Key diagnostic files require root access. Always <code>su -c</code> your debug scripts.</div>
+      </div>
+    </div>
+    <div class="lesson" style="border-left-color: var(--accent4)">
+      <div class="lesson-num" style="color:var(--accent4)">4</div>
+      <div>
+        <div class="lesson-title">File format matters as much as file name</div>
+        <div class="lesson-body">We worried about filenames (AppleColorEmoji vs NotoColorEmoji). The real issue was that the file we <em>thought</em> was Apple emoji was actually Google Noto renamed. Always verify file content, not just name.</div>
+      </div>
+    </div>
+    <div class="lesson" style="border-left-color: #bf5af2">
+      <div class="lesson-num" style="color:#bf5af2">5</div>
+      <div>
+        <div class="lesson-title">post-fs-data timing is everything</div>
+        <div class="lesson-body">The entire module depends on running code after <code>/data</code> is mounted but before Zygote starts. Use <code>service.sh</code> for anything that can wait until after boot.</div>
+      </div>
+    </div>
+    <div class="lesson" style="border-left-color: #5ac8fa">
+      <div class="lesson-num" style="color:#5ac8fa">6</div>
+      <div>
+        <div class="lesson-title">Android shell is not Linux shell</div>
+        <div class="lesson-body">No <code>jq</code> → use grep/awk. No <code>python3</code> → use dd/od for binary math. <code>/bin/sh</code> might be toybox, mksh, or busybox. Test for portability, not comfort.</div>
+      </div>
+    </div>
+    <div class="lesson" style="border-left-color: #30d158">
+      <div class="lesson-num" style="color:#30d158">7</div>
+      <div>
+        <div class="lesson-title">The boot watchdog is non-negotiable</div>
+        <div class="lesson-body">A buggy module can cause a permanent bootloop. The 90-second self-disable in <code>service.sh</code> saves users from having to manually disable via recovery. Always include this in any boot-critical module.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 12 ──────────────────────────────────────────── -->
+  <div class="section" id="s12">
+    <div class="section-header">
+      <div class="section-num" style="background:linear-gradient(135deg,#0a84ff,#bf5af2)">12</div>
+      <h2>Full Architecture Diagram</h2>
+    </div>
+
+    <div class="mermaid-wrap">
+      <div class="mermaid">
+graph TD
+    A([Device Powers On]) --> B[Kernel + KernelSU hook]
+    B --> C[magic-mount\nmodule/system/ → /system/]
+    C --> D[post-fs-data.sh\nruns as root]
+
+    D --> E{config.json\nfound?}
+    E -->|yes| F[Read wght\nlatinn arabic emoji]
+    E -->|no| G[Use defaults\nwght=400 all=true]
+    F --> H
+    G --> H
+
+    H[Emoji toggle] --> I{emoji=true?}
+    I -->|yes| J[NotoColorEmoji.ttf\nstays in /system/fonts/]
+    I -->|no| K[Move to fonts_store/\nstock Noto visible]
+
+    J --> L[Patch SF Pro fvar\nbinary weight write]
+    K --> L
+    L --> M[Rewrite fonts.xml\nawk: replace sans-serif]
+    M --> N[Write fonts_customization.xml]
+
+    N --> O([Zygote starts])
+    O --> P[Reads font_fallback.xml\nNotoColorEmoji.ttf → Apple emoji]
+    O --> Q[Reads fonts_customization.xml\nsans-serif → SysFont-Regular.ttf]
+
+    P --> R([System fully booted])
+    Q --> R
+    R --> S[service.sh exits\nno daemon left running]
+    R --> T[User opens WebUI]
+    T --> U[Change settings\nwrite config.json]
+    U --> V([Reboot to apply])
+    V --> D
+
+    style A fill:#1a2a1a,stroke:#30d158,color:#9fffb3
+    style O fill:#2a1a1a,stroke:#ff453a,color:#ff9999
+    style R fill:#1a2030,stroke:#0a84ff,color:#6eb4f7
+    style V fill:#1a2a1a,stroke:#30d158,color:#9fffb3
+    style D fill:#1a1a30,stroke:#bf5af2,color:#d4a0ff
+      </div>
+    </div>
+
+    <h3>Build → Install → Runtime phases</h3>
+
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-icon">🖥️</div>
+        <div class="phase-num">Phase 1</div>
+        <div class="phase-title" style="color:#0a84ff">Build</div>
+        <div class="phase-sub">On developer's Linux PC</div>
+        <ul class="phase-list">
+          <li>Extract SF Pro from Apple DMG</li>
+          <li>Extract SF Arabic from Apple DMG</li>
+          <li>Patch emoji font metrics</li>
+          <li>Validate all fonts</li>
+          <li>Zip → AppleFonts-v1.3.0.zip</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-icon">📲</div>
+        <div class="phase-num">Phase 2</div>
+        <div class="phase-title" style="color:#30d158">Install</div>
+        <div class="phase-sub">On device — runs once</div>
+        <ul class="phase-list">
+          <li>Check Android version</li>
+          <li>Check free space (500 MB)</li>
+          <li>Validate font files</li>
+          <li>Create OEM aliases</li>
+          <li>Init config.json defaults</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-icon">⚡</div>
+        <div class="phase-num">Phase 3</div>
+        <div class="phase-title" style="color:#bf5af2">Runtime</div>
+        <div class="phase-sub">On device — every boot</div>
+        <ul class="phase-list">
+          <li>Read config.json</li>
+          <li>Toggle font files</li>
+          <li>Binary-patch fvar weight</li>
+          <li>Rewrite fonts.xml overlay</li>
+          <li>Write fonts_customization.xml</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-icon">🛡️</div>
+        <div class="phase-num">Phase 4</div>
+        <div class="phase-title" style="color:#ff9f0a">Post-Boot</div>
+        <div class="phase-sub">After boot_completed</div>
+        <ul class="phase-list">
+          <li>Confirm boot succeeded</li>
+          <li>Disarm 90s watchdog</li>
+          <li>Write perf snapshot</li>
+          <li>Exit — no daemon</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>Apple Fonts &amp; Emoji Module</strong> · Written as a learning guide<br>
+  <span style="color:#5f6a7a; font-size:12px; margin-top:8px; display:block">If you're reading this to understand KernelSU font modules:<br>
+  the most important concepts are magic-mount, post-fs-data timing, and why font_fallback.xml is the real config on Android 16.</span>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      darkMode: true,
+      background: '#13131a',
+      primaryColor: '#1a1a2e',
+      primaryTextColor: '#f0f0f5',
+      primaryBorderColor: '#2a2a3a',
+      lineColor: '#0a84ff',
+      secondaryColor: '#0d0d15',
+      tertiaryColor: '#13131a',
+      nodeBorder: '#2a2a3a',
+      clusterBkg: '#1a1a24',
+      titleColor: '#f0f0f5',
+      edgeLabelBackground: '#13131a',
+      attributeBackgroundColorEven: '#1a1a24',
+      attributeBackgroundColorOdd: '#13131a',
+    }
+  });
+</script>
+</body>
+</html>
