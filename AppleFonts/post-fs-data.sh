@@ -40,14 +40,25 @@ log "config: wght=$WGHT latin=$LATIN arabic=$ARABIC geeza=$GEEZA cocon=$COCON em
 
 mkdir -p "$STORE"
 
-# ── Latin font toggle (SF Pro only — on or off) ───────────────────────────────
+# ── Latin font toggle (SF Pro + any OEM aliases created at install time) ─────
+ALIAS_LIST="$MODDIR/fonts_aliases.txt"
 if [ "$LATIN" = "false" ]; then
   [ -f "$FONTS/SysFont-Regular.ttf" ] && mv "$FONTS/SysFont-Regular.ttf" "$STORE/"
   [ -f "$FONTS/Roboto-Regular.ttf"  ] && mv "$FONTS/Roboto-Regular.ttf"  "$STORE/"
-  log "Latin: SF Pro moved to store (disabled)"
+  if [ -f "$ALIAS_LIST" ]; then
+    while IFS= read -r _AF; do
+      [ -n "$_AF" ] && [ -f "$FONTS/$_AF" ] && mv "$FONTS/$_AF" "$STORE/"
+    done < "$ALIAS_LIST"
+  fi
+  log "Latin: SF Pro + OEM aliases moved to store (disabled)"
 else
   [ -f "$STORE/SysFont-Regular.ttf" ] && mv "$STORE/SysFont-Regular.ttf" "$FONTS/"
   [ -f "$STORE/Roboto-Regular.ttf"  ] && mv "$STORE/Roboto-Regular.ttf"  "$FONTS/"
+  if [ -f "$ALIAS_LIST" ]; then
+    while IFS= read -r _AF; do
+      [ -n "$_AF" ] && [ -f "$STORE/$_AF" ] && mv "$STORE/$_AF" "$FONTS/"
+    done < "$ALIAS_LIST"
+  fi
 fi
 
 # ── Arabic font toggle (SF Arabic | Geeza Pro | Cocon — mutually exclusive) ───
@@ -83,11 +94,68 @@ else
 fi
 
 # ── Emoji toggle ──────────────────────────────────────────────────────────────
+# Apple emoji ships as NotoColorEmoji.ttf — Android's font_fallback.xml references
+# this name directly. The stock system NotoColorEmoji is a 2.8 MB COLRv0 file;
+# our 115 MB CBDT Apple emoji overlays it via KernelSU magic-mount.
 if [ "$EMOJI" = "false" ]; then
   [ -f "$FONTS/NotoColorEmoji.ttf" ] && mv "$FONTS/NotoColorEmoji.ttf" "$STORE/"
-  log "Emoji: moved to store (disabled)"
+  log "Emoji: NotoColorEmoji.ttf moved to store (disabled)"
 else
   [ -f "$STORE/NotoColorEmoji.ttf" ] && mv "$STORE/NotoColorEmoji.ttf" "$FONTS/"
+fi
+
+# ── Patch fonts.xml: universal OEM compatibility ──────────────────────────────
+# Replaces <family name="sans-serif"> with SF Pro for Samsung/Xiaomi/OEM support.
+# Emoji no longer needs injection here: the module overlays NotoColorEmoji.ttf
+# (Apple CBDT) directly, so font_fallback.xml picks up Apple emoji via the same
+# filename it already references.
+MOD_XML="$MODDIR/system/etc/fonts.xml"
+if [ -f /system/etc/fonts.xml ] && [ "$LATIN" != "false" ]; then
+  awk -v do_latin="$LATIN" -v wght="$WGHT" '
+    { lines[NR] = $0 }
+    END {
+      ss = 0; se = 0
+      for (i = 1; i <= NR; i++) {
+        if (!ss && lines[i] ~ /name="sans-serif"/) {
+          for (j = i; j >= (i > 3 ? i-3 : 1); j--)
+            if (lines[j] ~ /<family/) { ss = j; break }
+          for (k = i; k <= NR; k++)
+            if (lines[k] ~ /<\/family>/) { se = k; break }
+        }
+      }
+
+      w[1]=100; w[2]=200; w[3]=300; w[4]=400
+      w[5]=500; w[6]=600; w[7]=700; w[8]=800; w[9]=900
+      sf = "  <family name=\"sans-serif\">\n"
+      for (n = 1; n <= 9; n++) {
+        wv = (w[n] == 400) ? wght : w[n]
+        sf = sf "    <font weight=\"" w[n] "\" style=\"normal\">SysFont-Regular.ttf"
+        sf = sf "<axis tag=\"wght\" stylevalue=\"" wv "\"/>"
+        sf = sf "<axis tag=\"wdth\" stylevalue=\"100\"/>"
+        sf = sf "<axis tag=\"opsz\" stylevalue=\"28\"/></font>\n"
+      }
+      sf = sf "  </family>"
+
+      skip_ss = (do_latin != "false" && ss > 0 && se > 0)
+
+      for (i = 1; i <= NR; i++) {
+        if (skip_ss && i >= ss && i <= se) {
+          if (i == ss) printf "%s\n", sf
+          continue
+        }
+        print lines[i]
+      }
+    }
+  ' /system/etc/fonts.xml > "$MOD_XML"
+  if [ -s "$MOD_XML" ]; then
+    log "fonts.xml overlay: sans-serif→SFPro(latin=$LATIN,wght=$WGHT) emoji=NotoColorEmoji.ttf(overlay) [$(wc -l < "$MOD_XML")L]"
+  else
+    rm -f "$MOD_XML"
+    log "fonts.xml overlay: awk produced empty output — discarded"
+  fi
+else
+  rm -f "$MOD_XML"
+  log "fonts.xml: no overlay needed (latin=$LATIN)"
 fi
 
 # ── fvar binary patching ──────────────────────────────────────────────────────
@@ -175,6 +243,13 @@ if [ "$LATIN" != "false" ] && [ -f "$FONTS/SysFont-Regular.ttf" ]; then
   log "Patching SysFont-Regular.ttf wght default → $WGHT"
   patch_fvar_default "$FONTS/SysFont-Regular.ttf" "$WGHT_HEX" "$WGHT"
   [ -f "$FONTS/Roboto-Regular.ttf" ] && cp "$FONTS/SysFont-Regular.ttf" "$FONTS/Roboto-Regular.ttf"
+  # Propagate patched binary to any OEM alias files (Samsung, Xiaomi, etc.)
+  if [ -f "$ALIAS_LIST" ]; then
+    while IFS= read -r _AF; do
+      [ -n "$_AF" ] && [ -f "$FONTS/$_AF" ] && cp "$FONTS/SysFont-Regular.ttf" "$FONTS/$_AF"
+    done < "$ALIAS_LIST"
+    log "OEM aliases weight-patched from fonts_aliases.txt"
+  fi
 fi
 
 # ── Patch / apply Arabic font to NotoNaskhArabic-* alias slots ────────────────

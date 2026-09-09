@@ -1,0 +1,6 @@
+{
+  "version": "v1.3.0",
+  "versionCode": 130,
+  "zipUrl": "https://github.com/kvmy666/apple-fonts-module/releases/download/v1.3.0/AppleFonts-v1.3.0.zip",
+  "changelog": "v1.3.0 — Fix emoji on Android 16 (OxygenOS)\n• Root cause found: font_fallback.xml (the real font config) references NotoColorEmoji.ttf, not AppleColorEmoji.ttf\n• Apple emoji now ships as NotoColorEmoji.ttf — overlays the stock COLRv0 Noto via magic-mount\n• No APEX emoji on this device; overlay works directly\n• Removed arm64-only restriction (fonts are arch-independent)\n• fonts.xml awk simplified — emoji injection removed (no longer needed)"
+}

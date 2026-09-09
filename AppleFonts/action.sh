@@ -1,7 +1,7 @@
 #!/system/bin/sh
 # Quick action triggered from KernelSU manager.
-# Safely clears font caches only — does NOT restart zygote or reboot.
-# After running, reboot manually from KernelSU manager if needed.
+# Clears font caches AND runs the diagnostic script.
+# After running, pull the debug log:  adb pull /data/adb/AppleFonts/debug.log
 
 MODDIR=${0%/*}
 
@@ -25,6 +25,16 @@ for f in /data/system/font_*.dat /data/system/font_*.log; do
 done
 echo "OK  Cleared $COUNT typeface cache entries"
 
+echo ""
+echo "--- Running diagnostics ---"
+sh "$MODDIR/scripts/debug.sh" 2>/dev/null | tail -40
+
+# Copy log to sdcard so it can be pulled without root
+if [ -f /data/adb/AppleFonts/debug.log ]; then
+  cp /data/adb/AppleFonts/debug.log /sdcard/applefonts_debug.log 2>/dev/null && \
+    echo "Log copied → /sdcard/applefonts_debug.log" || \
+    echo "sdcard copy failed — pull from /data/adb/AppleFonts/debug.log with root"
+fi
 echo ""
 echo "Manual reboot required to see font changes."
 echo "==================================="
