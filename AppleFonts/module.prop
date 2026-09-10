@@ -4,4 +4,4 @@ version=v1.3.0
 versionCode=130
 author=Abdulkarim & M
 description=iOS 18.4 SF Pro • SF Arabic • Geeza Pro • Cocon • Apple Emoji. Universal OEM support (Samsung, Xiaomi, any Android). Live weight control via WebUI. KernelSU & Magisk.
-updateJson=https://raw.githubusercontent.com/kvmy666/apple-fonts-module/main/update.json
+updateJson=https://raw.githubusercontent.com/kvmy666/iosEmojis-Font-module/main/update.json
