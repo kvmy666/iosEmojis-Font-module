@@ -120,7 +120,57 @@ else
   [ -f "$STORE_FILE" ] && p "Found in fonts_store/ — emoji toggle is disabled in config." || p "Not in fonts_store/ either — emoji font is missing entirely."
 fi
 
-# ── Check /data/fonts (GMS override) ─────────────────────────────────────────
+# ── cmap format-14 (Unicode Variation Sequences) check ───────────────────────
+# Android/Minikin's FontFamily::hasGlyph(cp, FE0F) reads cmap format-14. Without
+# it, text-default emoji (❤ ☹ ♾) cannot resolve to the Apple family.
+h "NotoColorEmoji.ttf cmap format-14 (VS16) check"
+if [ -f "$EMOJI_FILE" ]; then
+  _u16() { dd if="$1" bs=1 skip="$2" count=2 2>/dev/null | od -An -tx1 | tr -d ' \n'; }
+  _u32() { dd if="$1" bs=1 skip="$2" count=4 2>/dev/null | od -An -tx1 | tr -d ' \n'; }
+  _dec() { printf '%d' "0x${1:-0}"; }
+  _NT=$(_dec "$(_u16 "$EMOJI_FILE" 4)")
+  _CMAP=-1; _i=0
+  while [ "$_i" -lt "$_NT" ]; do
+    _B=$((12 + _i * 16))
+    _TAG=$(dd if="$EMOJI_FILE" bs=1 skip="$_B" count=4 2>/dev/null | od -An -tx1 | tr -d ' \n')
+    if [ "$_TAG" = "636d6170" ]; then
+      _CMAP=$(_dec "$(_u32 "$EMOJI_FILE" $((_B + 8)))"); break
+    fi
+    _i=$((_i + 1))
+  done
+  if [ "$_CMAP" -ge 0 ]; then
+    _NS=$(_dec "$(_u16 "$EMOJI_FILE" $((_CMAP + 2)))")
+    _FOUND=0; _j=0
+    while [ "$_j" -lt "$_NS" ]; do
+      _R=$((_CMAP + 4 + _j * 8))
+      _PID=$(_dec "$(_u16 "$EMOJI_FILE" "$_R")")
+      _EID=$(_dec "$(_u16 "$EMOJI_FILE" $((_R + 2)))")
+      _OFF=$(_dec "$(_u32 "$EMOJI_FILE" $((_R + 4)))")
+      _FMT=$(_dec "$(_u16 "$EMOJI_FILE" $((_CMAP + _OFF)))")
+      [ "$_PID" = "0" ] && [ "$_EID" = "5" ] && [ "$_FMT" = "14" ] && _FOUND=1
+      _j=$((_j + 1))
+    done
+    if [ "$_FOUND" = "1" ]; then
+      p "format-14: FOUND (VS16 sequences resolvable — good)"
+    else
+      p "format-14: MISSING — text-default emoji (❤ etc.) will not resolve to Apple"
+    fi
+  else
+    p "cmap table not found — cannot check format-14"
+  fi
+else
+  p "skipped (emoji file not found)"
+fi
+
+# ── font_fallback.xml emoji families (root-only) ─────────────────────────────
+h "/system/etc/font_fallback.xml emoji families"
+if [ -r /system/etc/font_fallback.xml ]; then
+  grep -n -iE 'emoji|und-Zsye' /system/etc/font_fallback.xml >> "$OUT" 2>/dev/null || p "(no emoji families)"
+else
+  p "not readable (root-only) — run this script via KernelSU action (root)"
+fi
+
+# ── /data/fonts (GMS override) ───────────────────────────────────────────────
 h "/data/fonts (GMS font override — should be absent)"
 if [ -d /data/fonts ]; then
   p "WARNING: /data/fonts EXISTS. GMS downloaded fonts override our emoji!"
@@ -172,6 +222,19 @@ try:
     for cp, label in CHECK.items():
         status = "PRESENT" if cp in cmap else "MISSING"
         print(f"  {status}: {label}")
+
+    # CBDT strike ppem (should be ~137/160 of the bitmap size; upstream bug made
+    # them 1:1, rendering emoji ~14% too small)
+    if "CBLC" in font:
+        strikes = [s.bitmapSizeTable.ppemX for s in font["CBLC"].strikes]
+        print(f"CBDT strikes (ppemX): {strikes}")
+    # cmap format-14 (VS16) coverage
+    f14 = [t for t in font["cmap"].tables if t.format == 14]
+    if f14:
+        seqs = sum(len(s) for t in f14 for s in t.uvsDict.values())
+        print(f"cmap format-14: PRESENT ({seqs} sequences)")
+    else:
+        print("cmap format-14: MISSING — text-default emoji will not resolve to Apple")
 except ImportError:
     print("fonttools not available on device — skipping codepoint check")
 except Exception as e:
@@ -190,6 +253,8 @@ p "3. Magic mount: header md5 should MATCH if the overlay is active."
 p "4. /data/fonts should NOT exist (GMS override)."
 p "5. NotoColorEmoji.ttf in module/system/fonts should be >30MB with CBDT table (Apple CBDT repack)."
 p "6. Python check: U+267E (♾) should be PRESENT in the emoji font cmap."
+p "7. cmap format-14 must be PRESENT (fixes ❤ etc.); CBDT strikes should be"
+p "   [17,22,27,34,41,45,55,82] (fixed size), not [20,26,...,96] (shrunk)."
 p ""
 p "Pull this log with:  adb pull /sdcard/applefonts_debug.log"
 p ""

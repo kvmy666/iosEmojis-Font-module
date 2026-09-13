@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Default values — post-fs-data.sh regenerates this before zygote starts -->
+<fonts-modification version="1">
+
+  <family customizationType="new-named-family" name="sans-serif">
+    <font weight="100" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="100"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="200" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="200"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="300" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="300"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="400" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="400"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="500" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="500"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="600" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="600"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="700" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="700"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="800" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="800"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="900" style="normal">SysFont-Regular.ttf
+      <axis tag="wght" stylevalue="900"/>
+      <axis tag="wdth" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+  </family>
+
+  <family customizationType="new-named-family" lang="und-Arab">
+    <font weight="100" style="normal">SF-Arabic.ttf
+      <axis tag="wght" stylevalue="100"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="300" style="normal">SF-Arabic.ttf
+      <axis tag="wght" stylevalue="300"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="400" style="normal">SF-Arabic.ttf
+      <axis tag="wght" stylevalue="400"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="500" style="normal">SF-Arabic.ttf
+      <axis tag="wght" stylevalue="500"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="700" style="normal">SF-Arabic.ttf
+      <axis tag="wght" stylevalue="700"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+    <font weight="900" style="normal">SF-Arabic.ttf
+      <axis tag="wght" stylevalue="900"/>
+      <axis tag="opsz" stylevalue="28"/>
+    </font>
+  </family>
+
+</fonts-modification>

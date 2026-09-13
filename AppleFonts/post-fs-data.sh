@@ -106,16 +106,18 @@ fi
 
 # ── Patch fonts.xml: universal OEM compatibility ──────────────────────────────
 # Replaces <family name="sans-serif"> with SF Pro for Samsung/Xiaomi/OEM support.
-# Emoji no longer needs injection here: the module overlays NotoColorEmoji.ttf
-# (Apple CBDT) directly, so font_fallback.xml picks up Apple emoji via the same
-# filename it already references.
+# Also promotes the emoji family (NotoColorEmoji.ttf, which our overlay replaces
+# with the Apple font) to the top of the fallback list. This matters for
+# text-default codepoints (❤ ☹ ♾ © ...): apps that parse fonts.xml then resolve
+# them to the Apple emoji family instead of the stock legacy/symbol font.
 MOD_XML="$MODDIR/system/etc/fonts.xml"
-if [ -f /system/etc/fonts.xml ] && [ "$LATIN" != "false" ]; then
-  awk -v do_latin="$LATIN" -v wght="$WGHT" '
+if [ -f /system/etc/fonts.xml ] && { [ "$LATIN" != "false" ] || [ "$EMOJI" != "false" ]; }; then
+  awk -v do_latin="$LATIN" -v do_emoji="$EMOJI" -v wght="$WGHT" '
     { lines[NR] = $0 }
     END {
-      ss = 0; se = 0
+      fsl = 0; ss = 0; se = 0
       for (i = 1; i <= NR; i++) {
+        if (!fsl && lines[i] ~ /<familyset/) fsl = i
         if (!ss && lines[i] ~ /name="sans-serif"/) {
           for (j = i; j >= (i > 3 ? i-3 : 1); j--)
             if (lines[j] ~ /<family/) { ss = j; break }
@@ -137,6 +139,7 @@ if [ -f /system/etc/fonts.xml ] && [ "$LATIN" != "false" ]; then
       sf = sf "  </family>"
 
       skip_ss = (do_latin != "false" && ss > 0 && se > 0)
+      do_em   = (do_emoji != "false" && fsl > 0)
 
       for (i = 1; i <= NR; i++) {
         if (skip_ss && i >= ss && i <= se) {
@@ -144,18 +147,25 @@ if [ -f /system/etc/fonts.xml ] && [ "$LATIN" != "false" ]; then
           continue
         }
         print lines[i]
+        # Promote Apple emoji (overlaid as NotoColorEmoji.ttf) ahead of the
+        # stock legacy/symbol families so text-default emoji resolve to Apple.
+        if (do_em && i == fsl) {
+          print "    <family lang=\"und-Zsye\">"
+          print "        <font weight=\"400\" style=\"normal\">NotoColorEmoji.ttf</font>"
+          print "    </family>"
+        }
       }
     }
   ' /system/etc/fonts.xml > "$MOD_XML"
   if [ -s "$MOD_XML" ]; then
-    log "fonts.xml overlay: sans-serif→SFPro(latin=$LATIN,wght=$WGHT) emoji=NotoColorEmoji.ttf(overlay) [$(wc -l < "$MOD_XML")L]"
+    log "fonts.xml overlay: sans-serif→SFPro(latin=$LATIN,wght=$WGHT) emoji=promoted($EMOJI) [$(wc -l < "$MOD_XML")L]"
   else
     rm -f "$MOD_XML"
     log "fonts.xml overlay: awk produced empty output — discarded"
   fi
 else
   rm -f "$MOD_XML"
-  log "fonts.xml: no overlay needed (latin=$LATIN)"
+  log "fonts.xml: no overlay needed (latin=$LATIN emoji=$EMOJI)"
 fi
 
 # ── fvar binary patching ──────────────────────────────────────────────────────

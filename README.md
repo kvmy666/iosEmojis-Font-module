@@ -8,7 +8,7 @@ Replace your Android system fonts and emoji with genuine Apple iOS typefaces —
 ![Version](https://img.shields.io/github/v/release/kvmy666/apple-fonts-module?style=flat-square&label=Latest&color=green)
 ![Android](https://img.shields.io/badge/Android-9%2B-brightgreen?style=flat-square)
 
-> **v1.3.0** — Emoji now works correctly on Android 16 / OxygenOS. KernelSU will notify you automatically if you have an older version installed.
+> **v1.3.1** — Fixed shrunk emoji size and text-default emoji (❤️ ☹️ ♾️) falling back to Android. KernelSU will notify you automatically if you have an older version installed.
 
 ---
 
@@ -119,6 +119,13 @@ bash build.sh
 ---
 
 ## Changelog
+
+### v1.3.1
+- **Fix:** Emoji no longer render shrunk. The macOS 26 CBDT build labeled each strike's `ppem` as the bitmap pixel size, dropping Apple's ~1.17em overshoot. `tools/fix_emoji.py` rescales strike `ppem` (17/22/27/34/41/45/55/82) so emoji render at the natural v1.1.0 size. No bitmap is touched.
+- **Fix:** Text-default emoji (`❤️ ☹️ ♾️ ©™` …) now render Apple. The macOS 26 build dropped the cmap **format-14** (Unicode Variation Sequences) table, so Minikin could not resolve `U+FE0F` sequences and fell back to the stock legacy font. A format-14 table with 371 sequences is rebuilt at build time.
+- Restored the `fonts.xml` emoji-family promotion for apps that parse it.
+- Build now ships the repaired font automatically (`tools/fix_emoji.py`).
+- **Known limitation:** apps that use EmojiCompat (X/Twitter, Snapchat) can still show Google's emoji because they load Google's downloadable `NotoColorEmojiCompat` font independently of the system font.
 
 ### v1.3.0
 - **Fix:** Apple emoji now works on Android 16 / OxygenOS (and other devices)

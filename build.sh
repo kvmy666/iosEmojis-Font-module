@@ -26,7 +26,7 @@ mkdir -p "$OUT_DIR" "$TMP_DIR"
 
 echo ""
 echo "====================================="
-echo "  AppleFonts v1.3.0 — Build Script"
+echo "  AppleFonts v1.3.1 — Build Script"
 echo "====================================="
 echo ""
 echo "$(date)" >> "$LOG"
@@ -188,6 +188,31 @@ else
   warn "Branch B — SF-Pro.ttf is STATIC. Weight slider will be hidden in WebUI."
 fi
 
+# ─── Step 4.5: Repair Apple emoji for Android ──────────────────────────────
+# The upstream macOS 26 Linux build renders ~14% too small (CBDT strike ppem
+# labels the bitmap pixel size instead of Apple's overshoot) and ships no cmap
+# format-14 table (so Minikin cannot resolve U+FE0F emoji sequences such as the
+# red heart). tools/fix_emoji.py corrects both without touching any bitmap.
+# The repaired file is cached and only rebuilt when the tool or input changes.
+echo ""
+echo "[ Step 4.5 ] Repairing Apple emoji for Android..."
+
+SRC_EMOJI_FIXED="$SRC_EMOJI/AppleColorEmoji.fixed.ttf"
+if [ ! -f "$SRC_EMOJI/AppleColorEmoji.ttf" ]; then
+  fail "sources/emoji/AppleColorEmoji.ttf not found — place the macOS 26 emoji there"
+fi
+if [ ! -f "$SRC_EMOJI_FIXED" ] \
+   || [ "$SCRIPT_DIR/tools/fix_emoji.py" -nt "$SRC_EMOJI_FIXED" ] \
+   || [ "$SRC_EMOJI/AppleColorEmoji.ttf" -nt "$SRC_EMOJI_FIXED" ]; then
+  python3 "$SCRIPT_DIR/tools/fix_emoji.py" \
+    --input  "$SRC_EMOJI/AppleColorEmoji.ttf" \
+    --output "$SRC_EMOJI_FIXED" >> "$LOG" 2>&1 \
+    || fail "fix_emoji.py failed (see $LOG)"
+  ok "Apple emoji repaired: $(du -sh "$SRC_EMOJI_FIXED" | cut -f1)"
+else
+  ok "Using cached repaired emoji: $(du -sh "$SRC_EMOJI_FIXED" | cut -f1)"
+fi
+
 # ─── Step 5: Validate and copy primary fonts into module ───────────────────
 echo ""
 echo "[ Step 5 ] Validating and copying fonts into module..."
@@ -230,7 +255,7 @@ copy_font() {
 copy_font "$SF_PRO_TTF"    "SysFont-Regular.ttf"  31457280  # 30 MB — primary system name
 copy_font "$SF_ARABIC_TTF" "SF-Arabic.ttf"        31457280  # 30 MB — customize.sh expands this
 
-copy_font "$SRC_EMOJI/AppleColorEmoji.ttf" "NotoColorEmoji.ttf" 157286400  # 150 MB cap
+copy_font "$SRC_EMOJI_FIXED" "NotoColorEmoji.ttf" 157286400  # 150 MB cap
 
 # ─── Step 5.5: Geeza Pro (optional Arabic alternative) ─────────────────────
 echo ""
@@ -304,14 +329,14 @@ ok "app.js patched with IS_VARIABLE=$BRANCH_A"
 
 # ─── Step 9: Zip the module ────────────────────────────────────────────────
 echo ""
-echo "[ Step 9 ] Assembling AppleFonts-v1.3.0.zip..."
+echo "[ Step 9 ] Assembling AppleFonts-v1.3.1.zip..."
 
 # Clean webroot/fonts — customize.sh recreates these on-device with real copies.
 # Stale symlinks here become tiny garbage text files when unzipped by Android.
 rm -f "$MOD_DIR/webroot/fonts/"*
 info "Cleaned webroot/fonts/ (will be repopulated on-device by customize.sh)"
 
-OUT_ZIP="$OUT_DIR/AppleFonts-v1.3.0.zip"
+OUT_ZIP="$OUT_DIR/AppleFonts-v1.3.1.zip"
 rm -f "$OUT_ZIP"
 
 ( cd "$MOD_DIR" && zip -ry "$OUT_ZIP" . \
@@ -337,8 +362,8 @@ echo "Zip:     $OUT_ZIP"
 echo "Log:     $LOG"
 echo ""
 echo "Font replacement table:"
-echo "  AppleColorEmoji.ttf (primary)→ AppleColorEmoji.ttf  (iOS emoji, APEX-bypass via custom name)"
-echo "  NotoColorEmoji.ttf (APEX)   → fallback for new Unicode codepoints not yet in Apple font"
+echo "  NotoColorEmoji.ttf (system name) → repaired macOS 26 Apple emoji (CBDT, size + format-14 fixed)"
+echo "  NotoColorEmojiFlags.ttf          → left to the system (regional-indicator flags)"
 echo "  SysFont-Regular.ttf (Latin)  → SF-Pro.ttf           (SF Pro $([ "$BRANCH_A" = true ] && echo 'Variable' || echo 'Static'), toggleable)"
 echo "  NotoNaskhArabic-*.ttf        → SF-Arabic.ttf        (SF Arabic, toggleable)"
 if [ -f "$FONT_DEST/GeezaPro.ttf" ]; then
