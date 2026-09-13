@@ -25,14 +25,18 @@ Last updated: 2026-09-13
       `/sdcard/Download/`.
 - [x] **User flashed v1.3.1 and reports size + the emoji conflict fixed.**
 
-## Not verified automatically
-- adb dropped off Wi-Fi (`No route to host`) right after the user's test, so the
-  post-reboot `debug.sh`/logcat capture was not collected. Offline validation of
-  the built font already confirmed strikes `[17,22,27,34,41,45,55,82]` and
-  format-14 with 371 sequences.
+## Verified on-device (post-reboot, over adb)
+- Active `/system/fonts/NotoColorEmoji.ttf` = 115,970,024 bytes.
+- CBDT strikes: `[17, 22, 27, 34, 41, 45, 55, 82]` (size fix live).
+- cmap format-14: 371 sequences (VS16 fix live).
+- `/system/etc/fonts.xml`: our `und-Zsye` NotoColorEmoji.ttf family at line 37,
+  `sans-serif` replaced with SF Pro at line 41.
+- No font/emoji errors in logcat.
+- User reports size + conflict fixed.
 
 ## TODO
-- [ ] (Optional) Reconnect adb and run `debug.sh` for a clean post-reboot record.
+- [ ] (Optional) Create the GitHub release `v1.3.1` with
+      `AppleFonts-v1.3.1.zip` so `update.json` works.
 - [ ] (Optional, app-level) EmojiCompat fix for X/Snapchat — needs clearing the
       GMS `FontsProvider` cache and/or shipping a compat font.
 
